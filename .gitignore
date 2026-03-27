@@ -1,9 +1,16 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
+# ─── Backend (Spring Boot / Maven) ───
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# ─── Frontend (Node / React) ───
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+frontend/.env.*.local
+
+# ─── IDE ───
 ### STS ###
 .apt_generated
 .classpath
@@ -31,3 +38,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# ─── OS ───
+.DS_Store
+Thumbs.db
