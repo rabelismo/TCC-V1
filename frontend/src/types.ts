@@ -31,3 +31,25 @@ export interface StudentProgress {
   startedAt: string | null;
   completedAt: string | null;
 }
+
+export interface SubmissionRequest {
+  moduleId: number;
+  userId?: number;
+  code: string;
+}
+
+export interface CriterionResult {
+  criterionId: number;
+  description: string;
+  passed: boolean;
+  hint: string | null;
+  actualOutput: string;
+  hidden: boolean;
+}
+
+export interface SubmissionResult {
+  allPassed: boolean;
+  passedCount: number;
+  totalCount: number;
+  criteria: CriterionResult[];
+}

@@ -472,3 +472,146 @@ body,
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
 }
+
+/* ─── Submit Button ─── */
+
+.btn-submit {
+  background: var(--accent);
+  color: #fff;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ─── Submission Feedback ─── */
+
+.submission-feedback {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #0d0d0d;
+  overflow-y: auto;
+}
+
+.feedback-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.feedback-header.all-passed {
+  background: rgba(46, 204, 113, 0.12);
+  color: var(--green);
+}
+
+.feedback-header.has-failures {
+  background: rgba(231, 76, 60, 0.1);
+  color: var(--yellow);
+}
+
+.feedback-score {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.feedback-progress-bar {
+  height: 3px;
+  background: var(--bg-tertiary);
+}
+
+.feedback-progress-fill {
+  height: 100%;
+  background: var(--yellow);
+  transition: width 0.4s ease;
+}
+
+.feedback-progress-fill.complete {
+  background: var(--green);
+}
+
+.feedback-criteria-list {
+  list-style: none;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.feedback-criterion {
+  border-radius: var(--radius-sm);
+}
+
+.criterion-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: left;
+  border-radius: var(--radius-sm);
+  transition: background 0.1s;
+}
+
+.criterion-row:hover {
+  background: var(--bg-hover);
+}
+
+.criterion-icon {
+  flex-shrink: 0;
+  display: flex;
+}
+
+.icon-pass {
+  color: var(--green);
+}
+
+.icon-fail {
+  color: var(--red);
+}
+
+.criterion-desc {
+  flex: 1;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.criterion-desc.passed {
+  color: var(--text-secondary);
+}
+
+.criterion-desc.failed {
+  color: var(--text-primary);
+}
+
+.criterion-chevron {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.criterion-hint {
+  padding: 8px 10px 8px 42px;
+  font-size: 0.78rem;
+  color: var(--yellow);
+  line-height: 1.5;
+  border-left: 2px solid var(--yellow);
+  margin-left: 18px;
+  margin-bottom: 4px;
+}
+
+.criterion-hint strong {
+  color: var(--yellow);
+}

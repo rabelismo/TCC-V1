@@ -1,6 +1,8 @@
 package com.ufc.tcc_gr.config;
 
+import com.ufc.tcc_gr.model.AcceptanceCriterion;
 import com.ufc.tcc_gr.model.Module;
+import com.ufc.tcc_gr.repository.AcceptanceCriterionRepository;
 import com.ufc.tcc_gr.repository.ModuleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -12,11 +14,17 @@ import org.springframework.context.annotation.Configuration;
 public class DataInitializer {
 
     @Bean
-    CommandLineRunner initModules(ModuleRepository repo) {
+    CommandLineRunner initModules(ModuleRepository moduleRepo,
+                                  AcceptanceCriterionRepository criterionRepo) {
         return args -> {
-            if (repo.count() > 0) return;
+            if (moduleRepo.count() > 0 && criterionRepo.count() > 0) return;
+            if (moduleRepo.count() > 0 && criterionRepo.count() == 0) {
+                moduleRepo.deleteAll();
+            }
 
-            repo.save(Module.builder()
+            // ── Módulo 1: Variáveis e Print ──
+
+            Module m1 = moduleRepo.save(Module.builder()
                 .orderIndex(1)
                 .title("Variáveis e Print – Identidade do Jogo")
                 .concept("VARIABLES")
@@ -82,7 +90,37 @@ public class DataInitializer {
                 .expectedOutput("Jogo da Velha")
                 .build());
 
-            repo.save(Module.builder()
+            criterionRepo.save(AcceptanceCriterion.builder()
+                .module(m1).orderIndex(1).type("OUTPUT_CONTAINS")
+                .description("A saída deve conter o nome \"Jogo da Velha\"")
+                .expectedOutput("Jogo da Velha")
+                .hint("Use print() com o nome do jogo. Ex: print(nome_jogo)")
+                .hidden(false).build());
+
+            criterionRepo.save(AcceptanceCriterion.builder()
+                .module(m1).orderIndex(2).type("OUTPUT_CONTAINS")
+                .description("A saída deve conter o símbolo do jogador \"X\"")
+                .expectedOutput("X")
+                .hint("Crie a variável jogador_x = \"X\" e use print() para exibi-la.")
+                .hidden(false).build());
+
+            criterionRepo.save(AcceptanceCriterion.builder()
+                .module(m1).orderIndex(3).type("OUTPUT_CONTAINS")
+                .description("A saída deve conter o símbolo do jogador \"O\"")
+                .expectedOutput("O")
+                .hint("Crie a variável jogador_o = \"O\" e use print() para exibi-la.")
+                .hidden(false).build());
+
+            criterionRepo.save(AcceptanceCriterion.builder()
+                .module(m1).orderIndex(4).type("OUTPUT_CONTAINS")
+                .description("O código deve usar a função print()")
+                .expectedOutput("Jogo da Velha")
+                .hint("Você precisa usar print() para exibir a saída no console.")
+                .hidden(true).build());
+
+            // ── Módulo 2: Arrays 2D ──
+
+            Module m2 = moduleRepo.save(Module.builder()
                 .orderIndex(2)
                 .title("Arrays 2D – O Tabuleiro")
                 .concept("ARRAYS")
@@ -155,7 +193,37 @@ public class DataInitializer {
                 .expectedOutput("X")
                 .build());
 
-            repo.save(Module.builder()
+            criterionRepo.save(AcceptanceCriterion.builder()
+                .module(m2).orderIndex(1).type("OUTPUT_CONTAINS")
+                .description("O tabuleiro exibido deve conter \"X\"")
+                .expectedOutput("X")
+                .hint("Certifique-se de que tabuleiro[0][0] = \"X\" e que exibir_tabuleiro() imprime o conteúdo.")
+                .hidden(false).build());
+
+            criterionRepo.save(AcceptanceCriterion.builder()
+                .module(m2).orderIndex(2).type("OUTPUT_CONTAINS")
+                .description("O tabuleiro exibido deve conter \"O\"")
+                .expectedOutput("O")
+                .hint("Certifique-se de que tabuleiro[1][1] = \"O\" e que exibir_tabuleiro() imprime o conteúdo.")
+                .hidden(false).build());
+
+            criterionRepo.save(AcceptanceCriterion.builder()
+                .module(m2).orderIndex(3).type("OUTPUT_CONTAINS")
+                .description("O tabuleiro deve ter separadores de linha \"---\"")
+                .expectedOutput("---")
+                .hint("Use print(\"----------\") ou similar entre as linhas do tabuleiro.")
+                .hidden(false).build());
+
+            criterionRepo.save(AcceptanceCriterion.builder()
+                .module(m2).orderIndex(4).type("OUTPUT_CONTAINS")
+                .description("O tabuleiro deve usar \"|\" para separar colunas")
+                .expectedOutput("|")
+                .hint("Formate cada linha como: print(f\" {tab[i][0]} | {tab[i][1]} | {tab[i][2]} \")")
+                .hidden(false).build());
+
+            // ── Módulo 3: If/Else ──
+
+            Module m3 = moduleRepo.save(Module.builder()
                 .orderIndex(3)
                 .title("If/Else – Validação de Jogadas")
                 .concept("CONTROL_FLOW")
@@ -230,7 +298,37 @@ public class DataInitializer {
                 .expectedOutput("False")
                 .build());
 
-            repo.save(Module.builder()
+            criterionRepo.save(AcceptanceCriterion.builder()
+                .module(m3).orderIndex(1).type("OUTPUT_CONTAINS")
+                .description("jogada_valida(tab, 0, 0) deve retornar False (casa ocupada)")
+                .expectedOutput("False")
+                .hint("Verifique se a casa tab[linha][coluna] == \" \" e se linha/coluna estão entre 0 e 2.")
+                .hidden(false).build());
+
+            criterionRepo.save(AcceptanceCriterion.builder()
+                .module(m3).orderIndex(2).type("OUTPUT_CONTAINS")
+                .description("jogada_valida(tab, 2, 2) deve retornar True (casa vazia)")
+                .expectedOutput("True")
+                .hint("A posição [2][2] está vazia no tabuleiro inicial, então deve retornar True.")
+                .hidden(false).build());
+
+            criterionRepo.save(AcceptanceCriterion.builder()
+                .module(m3).orderIndex(3).type("OUTPUT_CONTAINS")
+                .description("verificar_vencedor() deve detectar vitória do \"X\" na diagonal")
+                .expectedOutput("X")
+                .hint("Após tabuleiro[2][2] = \"X\", a diagonal principal fica X-X-X. Verifique tab[0][0]==tab[1][1]==tab[2][2].")
+                .hidden(false).build());
+
+            criterionRepo.save(AcceptanceCriterion.builder()
+                .module(m3).orderIndex(4).type("OUTPUT_CONTAINS")
+                .description("O código não deve gerar erros de execução")
+                .expectedOutput("False")
+                .hint("Revise a lógica das funções. Certifique-se de usar return em vez de print dentro delas.")
+                .hidden(true).build());
+
+            // ── Módulo 4: While Loops ──
+
+            Module m4 = moduleRepo.save(Module.builder()
                 .orderIndex(4)
                 .title("While Loops – Motor do Jogo")
                 .concept("LOOPS")
@@ -319,6 +417,35 @@ public class DataInitializer {
                     """)
                 .expectedOutput("Jogo da Velha iniciado!")
                 .build());
+
+            criterionRepo.save(AcceptanceCriterion.builder()
+                .module(m4).orderIndex(1).type("OUTPUT_CONTAINS")
+                .description("O jogo deve exibir \"Jogo da Velha iniciado!\"")
+                .expectedOutput("Jogo da Velha iniciado!")
+                .hint("Mantenha o print(\"Jogo da Velha iniciado!\") no início do código.")
+                .hidden(false).build());
+
+            criterionRepo.save(AcceptanceCriterion.builder()
+                .module(m4).orderIndex(2).type("OUTPUT_CONTAINS")
+                .description("O tabuleiro deve ser exibido com separadores \"|\"")
+                .expectedOutput("|")
+                .hint("Chame exibir_tabuleiro(tabuleiro) dentro do loop.")
+                .hidden(false).build());
+
+            criterionRepo.save(AcceptanceCriterion.builder()
+                .module(m4).orderIndex(3).type("OUTPUT_CONTAINS")
+                .description("O código deve conter um loop while funcional")
+                .expectedOutput("---")
+                .hint("Use 'while jogo_ativo:' e chame exibir_tabuleiro() que imprime '---' entre linhas.")
+                .hidden(false).build());
+
+            criterionRepo.save(AcceptanceCriterion.builder()
+                .module(m4).orderIndex(4).type("TEST_CASE")
+                .description("O game loop deve processar jogadas via input()")
+                .input("0\n0\n1\n1\n")
+                .expectedOutput("|")
+                .hint("Use input() para ler linha e coluna. Ex: linha = int(input('Linha: '))")
+                .hidden(true).build());
         };
     }
 }

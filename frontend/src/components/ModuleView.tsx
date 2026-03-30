@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { Play, RotateCcw } from "lucide-react";
+import { Play, RotateCcw, Send } from "lucide-react";
 import TheoryPanel from "./TheoryPanel";
 import CodeEditor from "./CodeEditor";
 import TerminalOutput from "./TerminalOutput";
-import { executeCode } from "../services/api";
-import type { Module } from "../types";
+import SubmissionFeedback from "./SubmissionFeedback";
+import { executeCode, submitCode } from "../services/api";
+import type { Module, SubmissionResult } from "../types";
 
 interface ModuleViewProps {
   module: Module;
@@ -15,23 +16,40 @@ export default function ModuleView({ module }: ModuleViewProps) {
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
   const [isRunning, setIsRunning] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [executionTimeMs, setExecutionTimeMs] = useState<number | undefined>();
+  const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
 
   const handleRun = async () => {
     setIsRunning(true);
     setOutput("");
     setError("");
     setExecutionTimeMs(undefined);
+    setSubmissionResult(null);
 
     try {
       const result = await executeCode({ code });
       setOutput(result.output);
       setError(result.error);
       setExecutionTimeMs(result.executionTimeMs);
-    } catch (err) {
+    } catch {
       setError("Erro de conexão com o servidor. Verifique se o backend está rodando.");
     } finally {
       setIsRunning(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    setSubmissionResult(null);
+
+    try {
+      const result = await submitCode({ moduleId: module.id, code });
+      setSubmissionResult(result);
+    } catch {
+      setError("Erro ao submeter. Verifique se o backend está rodando.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -40,6 +58,7 @@ export default function ModuleView({ module }: ModuleViewProps) {
     setOutput("");
     setError("");
     setExecutionTimeMs(undefined);
+    setSubmissionResult(null);
   };
 
   return (
@@ -58,9 +77,13 @@ export default function ModuleView({ module }: ModuleViewProps) {
 
         <div className="panel-code">
           <div className="code-toolbar">
-            <button className="btn btn-run" onClick={handleRun} disabled={isRunning}>
+            <button className="btn btn-run" onClick={handleRun} disabled={isRunning || isSubmitting}>
               <Play size={16} />
               {isRunning ? "Executando..." : "Executar"}
+            </button>
+            <button className="btn btn-submit" onClick={handleSubmit} disabled={isRunning || isSubmitting}>
+              <Send size={16} />
+              {isSubmitting ? "Avaliando..." : "Submeter"}
             </button>
             <button className="btn btn-reset" onClick={handleReset}>
               <RotateCcw size={16} />
@@ -73,12 +96,16 @@ export default function ModuleView({ module }: ModuleViewProps) {
           </div>
 
           <div className="terminal-area">
-            <TerminalOutput
-              output={output}
-              error={error}
-              isRunning={isRunning}
-              executionTimeMs={executionTimeMs}
-            />
+            {submissionResult ? (
+              <SubmissionFeedback result={submissionResult} />
+            ) : (
+              <TerminalOutput
+                output={output}
+                error={error}
+                isRunning={isRunning}
+                executionTimeMs={executionTimeMs}
+              />
+            )}
           </div>
         </div>
       </div>

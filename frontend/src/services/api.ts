@@ -3,6 +3,8 @@ import type {
   Module,
   CodeExecutionRequest,
   CodeExecutionResponse,
+  SubmissionRequest,
+  SubmissionResult,
 } from "../types";
 
 const api = axios.create({
@@ -24,5 +26,12 @@ export async function executeCode(
   request: CodeExecutionRequest
 ): Promise<CodeExecutionResponse> {
   const { data } = await api.post<CodeExecutionResponse>("/execute", request);
+  return data;
+}
+
+export async function submitCode(
+  request: SubmissionRequest
+): Promise<SubmissionResult> {
+  const { data } = await api.post<SubmissionResult>("/submit", request);
   return data;
 }
