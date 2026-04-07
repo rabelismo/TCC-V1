@@ -25,11 +25,13 @@ public class User {
     @Column(nullable = false, length = 100)
     private String name;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String passwordHash;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private String role = "STUDENT";
+    private UserRole role = UserRole.STUDENT;
 
     @Setter(AccessLevel.NONE)
     @Column(nullable = false, updatable = false)

@@ -45,6 +45,7 @@ export default function ModuleView({ module, userId, onCompleted }: ModuleViewPr
   const [code, setCode] = useState(() =>
     loadSavedCode(module.id, module.starterCode)
   );
+  const [stdinInput, setStdinInput] = useState(module.sampleInput ?? "");
   const [output, setOutput] = useState("");
   const [error, setError] = useState("");
   const [isRunning, setIsRunning] = useState(false);
@@ -86,7 +87,11 @@ export default function ModuleView({ module, userId, onCompleted }: ModuleViewPr
     abortRef.current = controller;
 
     try {
-      const result = await executeCode({ code }, controller.signal);
+      const request: import("../types").CodeExecutionRequest = { code };
+      if (stdinInput.trim()) {
+        request.input = stdinInput;
+      }
+      const result = await executeCode(request, controller.signal);
       setOutput(result.output);
       setError(result.error);
       setExecutionTimeMs(result.executionTimeMs);
@@ -126,6 +131,7 @@ export default function ModuleView({ module, userId, onCompleted }: ModuleViewPr
   const handleReset = () => {
     setCode(module.starterCode);
     clearSavedCode(module.id);
+    setStdinInput(module.sampleInput ?? "");
     setOutput("");
     setError("");
     setExecutionTimeMs(undefined);
@@ -172,6 +178,22 @@ export default function ModuleView({ module, userId, onCompleted }: ModuleViewPr
           <div className="code-area">
             <CodeEditor code={code} onChange={handleCodeChange} />
           </div>
+
+          {module.sampleInput && (
+            <div className="stdin-area">
+              <label className="stdin-label" htmlFor="stdin-input">
+                Entrada (stdin) — dados que o programa receberá via input():
+              </label>
+              <textarea
+                id="stdin-input"
+                className="stdin-textarea"
+                value={stdinInput}
+                onChange={(e) => setStdinInput(e.target.value)}
+                rows={Math.min(stdinInput.split("\n").length + 1, 6)}
+                spellCheck={false}
+              />
+            </div>
+          )}
 
           <div className="terminal-area">
             {submissionResult ? (

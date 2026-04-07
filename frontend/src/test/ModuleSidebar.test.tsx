@@ -37,16 +37,18 @@ const mockModules: Module[] = [
   },
 ];
 
+const defaultProps = {
+  modules: mockModules,
+  activeModuleId: null as number | null,
+  onSelectModule: () => {},
+  completedModuleIds: new Set<number>(),
+  userName: 'Aluno Teste',
+  onLogout: () => {},
+};
+
 describe('ModuleSidebar', () => {
   it('renderiza todos os títulos dos módulos', () => {
-    render(
-      <ModuleSidebar
-        modules={mockModules}
-        activeModuleId={null}
-        onSelectModule={() => {}}
-        completedModuleIds={new Set()}
-      />
-    );
+    render(<ModuleSidebar {...defaultProps} />);
 
     expect(screen.getByText('Hello, World!')).toBeInTheDocument();
     expect(screen.getByText('Variáveis e Input')).toBeInTheDocument();
@@ -54,14 +56,7 @@ describe('ModuleSidebar', () => {
   });
 
   it('aplica classe "active" no módulo selecionado', () => {
-    render(
-      <ModuleSidebar
-        modules={mockModules}
-        activeModuleId={2}
-        onSelectModule={() => {}}
-        completedModuleIds={new Set()}
-      />
-    );
+    render(<ModuleSidebar {...defaultProps} activeModuleId={2} />);
 
     const buttons = screen.getAllByRole('button');
     const activeButton = buttons.find((b) =>
@@ -74,14 +69,7 @@ describe('ModuleSidebar', () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
 
-    render(
-      <ModuleSidebar
-        modules={mockModules}
-        activeModuleId={null}
-        onSelectModule={onSelect}
-        completedModuleIds={new Set()}
-      />
-    );
+    render(<ModuleSidebar {...defaultProps} onSelectModule={onSelect} />);
 
     await user.click(screen.getByText('Listas 1D'));
     expect(onSelect).toHaveBeenCalledWith(3);
@@ -89,12 +77,7 @@ describe('ModuleSidebar', () => {
 
   it('exibe barra de progresso com contagem correta', () => {
     render(
-      <ModuleSidebar
-        modules={mockModules}
-        activeModuleId={null}
-        onSelectModule={() => {}}
-        completedModuleIds={new Set([1, 3])}
-      />
+      <ModuleSidebar {...defaultProps} completedModuleIds={new Set([1, 3])} />
     );
 
     expect(screen.getByText('2/3 concluídos')).toBeInTheDocument();
@@ -102,12 +85,7 @@ describe('ModuleSidebar', () => {
 
   it('mostra check icon para módulos concluídos', () => {
     render(
-      <ModuleSidebar
-        modules={mockModules}
-        activeModuleId={null}
-        onSelectModule={() => {}}
-        completedModuleIds={new Set([1])}
-      />
+      <ModuleSidebar {...defaultProps} completedModuleIds={new Set([1])} />
     );
 
     const buttons = screen.getAllByRole('button');
@@ -118,16 +96,35 @@ describe('ModuleSidebar', () => {
   });
 
   it('exibe cabeçalhos de bloco', () => {
-    render(
-      <ModuleSidebar
-        modules={mockModules}
-        activeModuleId={null}
-        onSelectModule={() => {}}
-        completedModuleIds={new Set()}
-      />
-    );
+    render(<ModuleSidebar {...defaultProps} />);
 
     expect(screen.getByText('O Básico da Comunicação')).toBeInTheDocument();
     expect(screen.getByText('Desenhando o Campo de Batalha')).toBeInTheDocument();
+  });
+
+  it('exibe o nome do usuário', () => {
+    render(<ModuleSidebar {...defaultProps} />);
+
+    expect(screen.getByText('Aluno Teste')).toBeInTheDocument();
+  });
+
+  it('chama onLogout ao clicar no botão de sair', async () => {
+    const user = userEvent.setup();
+    const onLogout = vi.fn();
+
+    render(<ModuleSidebar {...defaultProps} onLogout={onLogout} />);
+
+    await user.click(screen.getByTitle('Sair'));
+    expect(onLogout).toHaveBeenCalledOnce();
+  });
+
+  it('barra de progresso tem atributos ARIA corretos', () => {
+    render(
+      <ModuleSidebar {...defaultProps} completedModuleIds={new Set([1])} />
+    );
+
+    const progressbar = screen.getByRole('progressbar');
+    expect(progressbar).toHaveAttribute('aria-valuenow', '1');
+    expect(progressbar).toHaveAttribute('aria-valuemax', '3');
   });
 });

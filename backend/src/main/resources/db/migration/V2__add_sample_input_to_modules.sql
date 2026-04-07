@@ -1,0 +1,1 @@
+ALTER TABLE modules ADD COLUMN IF NOT EXISTS sample_input TEXT;

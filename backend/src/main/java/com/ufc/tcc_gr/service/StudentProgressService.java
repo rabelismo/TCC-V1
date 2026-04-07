@@ -44,7 +44,7 @@ public class StudentProgressService {
                 });
 
         if (request.getStatus() != null) {
-            progress.setStatus(ProgressStatus.valueOf(request.getStatus()));
+            progress.setStatus(request.getStatus());
         }
         if (request.getCodeSnapshot() != null) {
             progress.setLastCodeSnapshot(request.getCodeSnapshot());

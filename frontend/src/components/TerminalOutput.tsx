@@ -12,19 +12,19 @@ export default function TerminalOutput({
   executionTimeMs,
 }: TerminalOutputProps) {
   return (
-    <div className="terminal-output">
+    <div className="terminal-output" role="region" aria-label="Saída do programa">
       <div className="terminal-header">
         <span className="terminal-title">Terminal</span>
         {executionTimeMs !== undefined && executionTimeMs > 0 && (
           <span className="terminal-time">{executionTimeMs}ms</span>
         )}
       </div>
-      <pre className="terminal-body">
+      <pre className="terminal-body" aria-live="polite" aria-atomic="false">
         {isRunning && (
-          <span className="terminal-running">Executando...</span>
+          <span className="terminal-running" role="status">Executando...</span>
         )}
         {output && <span className="terminal-stdout">{output}</span>}
-        {error && <span className="terminal-stderr">{error}</span>}
+        {error && <span className="terminal-stderr" role="alert">{error}</span>}
         {!isRunning && !output && !error && (
           <span className="terminal-placeholder">
             Clique em "Executar" para ver a saída do seu código aqui.

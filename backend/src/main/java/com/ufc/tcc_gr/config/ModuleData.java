@@ -14,6 +14,7 @@ public class ModuleData {
     private String theoryMarkdown;
     private String starterCode;
     private String expectedOutput;
+    private String sampleInput;
     private List<CriterionData> criteria;
 
     @Data

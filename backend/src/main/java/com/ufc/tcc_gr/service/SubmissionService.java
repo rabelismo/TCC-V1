@@ -4,6 +4,7 @@ import com.ufc.tcc_gr.dto.*;
 import com.ufc.tcc_gr.exception.ResourceNotFoundException;
 import com.ufc.tcc_gr.model.AcceptanceCriterion;
 import com.ufc.tcc_gr.model.CriterionType;
+import com.ufc.tcc_gr.model.ProgressStatus;
 import com.ufc.tcc_gr.repository.AcceptanceCriterionRepository;
 import com.ufc.tcc_gr.repository.ModuleRepository;
 import lombok.RequiredArgsConstructor;
@@ -83,7 +84,7 @@ public class SubmissionService {
                 progressService.updateProgress(new ProgressUpdateRequest(
                         request.getUserId(),
                         request.getModuleId(),
-                        "COMPLETED",
+                        ProgressStatus.COMPLETED,
                         request.getCode()
                 ));
             } catch (Exception e) {

@@ -1,7 +1,7 @@
 package com.ufc.tcc_gr.controller;
 
+import com.ufc.tcc_gr.dto.ProgressResponse;
 import com.ufc.tcc_gr.dto.ProgressUpdateRequest;
-import com.ufc.tcc_gr.model.StudentProgress;
 import com.ufc.tcc_gr.service.StudentProgressService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +18,13 @@ public class StudentProgressController {
     private final StudentProgressService progressService;
 
     @GetMapping("/user/{userId}")
-    public List<StudentProgress> getUserProgress(@PathVariable Long userId) {
-        return progressService.getProgressByUser(userId);
+    public List<ProgressResponse> getUserProgress(@PathVariable Long userId) {
+        return progressService.getProgressByUser(userId)
+                .stream().map(ProgressResponse::from).toList();
     }
 
     @PostMapping
-    public ResponseEntity<StudentProgress> updateProgress(@Valid @RequestBody ProgressUpdateRequest request) {
-        return ResponseEntity.ok(progressService.updateProgress(request));
+    public ResponseEntity<ProgressResponse> updateProgress(@Valid @RequestBody ProgressUpdateRequest request) {
+        return ResponseEntity.ok(ProgressResponse.from(progressService.updateProgress(request)));
     }
 }

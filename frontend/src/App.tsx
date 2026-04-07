@@ -1,21 +1,22 @@
 import { useCallback, useEffect, useState } from "react";
 import ModuleSidebar from "./components/ModuleSidebar";
 import ModuleView from "./components/ModuleView";
+import AuthPage from "./components/AuthPage";
 import { fetchModules, fetchUserProgress } from "./services/api";
-import type { Module, StudentProgress } from "./types";
+import type { Module, StudentProgress, AuthUser } from "./types";
 
-function getOrCreateUserId(): number {
-  const key = "tcc_user_id";
-  const stored = localStorage.getItem(key);
-  if (stored) return Number(stored);
-  const id = 1;
-  localStorage.setItem(key, String(id));
-  return id;
+function loadStoredUser(): AuthUser | null {
+  try {
+    const stored = localStorage.getItem("tcc_auth");
+    if (!stored) return null;
+    return JSON.parse(stored) as AuthUser;
+  } catch {
+    return null;
+  }
 }
 
-const USER_ID = getOrCreateUserId();
-
 export default function App() {
+  const [user, setUser] = useState<AuthUser | null>(loadStoredUser);
   const [modules, setModules] = useState<Module[]>([]);
   const [activeModuleId, setActiveModuleId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
@@ -25,8 +26,9 @@ export default function App() {
   );
 
   const loadProgress = useCallback(async () => {
+    if (!user) return;
     try {
-      const progress = await fetchUserProgress(USER_ID);
+      const progress = await fetchUserProgress(user.userId);
       const completed = new Set(
         progress
           .filter((p: StudentProgress) => p.status === "COMPLETED")
@@ -34,9 +36,9 @@ export default function App() {
       );
       setCompletedModuleIds(completed);
     } catch {
-      // progress is optional, don't block
+      // progress is optional
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     fetchModules()
@@ -50,22 +52,35 @@ export default function App() {
         )
       )
       .finally(() => setLoading(false));
+  }, []);
 
-    loadProgress();
-  }, [loadProgress]);
+  useEffect(() => {
+    if (user) loadProgress();
+  }, [user, loadProgress]);
 
-  const handleModuleCompleted = useCallback(
-    (moduleId: number) => {
-      setCompletedModuleIds((prev) => new Set([...prev, moduleId]));
-    },
-    []
-  );
+  const handleAuth = useCallback((authedUser: AuthUser) => {
+    setUser(authedUser);
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem("tcc_auth");
+    setUser(null);
+    setCompletedModuleIds(new Set());
+  }, []);
+
+  const handleModuleCompleted = useCallback((moduleId: number) => {
+    setCompletedModuleIds((prev) => new Set([...prev, moduleId]));
+  }, []);
+
+  if (!user) {
+    return <AuthPage onAuth={handleAuth} />;
+  }
 
   const activeModule = modules.find((m) => m.id === activeModuleId) ?? null;
 
   if (loading) {
     return (
-      <div className="loading-screen">
+      <div className="loading-screen" role="status" aria-live="polite">
         <div className="spinner" />
         <p>Carregando módulos...</p>
       </div>
@@ -88,13 +103,15 @@ export default function App() {
         activeModuleId={activeModuleId}
         onSelectModule={setActiveModuleId}
         completedModuleIds={completedModuleIds}
+        userName={user.name}
+        onLogout={handleLogout}
       />
       <main className="app-main">
         {activeModule ? (
           <ModuleView
             key={activeModule.id}
             module={activeModule}
-            userId={USER_ID}
+            userId={user.userId}
             onCompleted={handleModuleCompleted}
           />
         ) : (

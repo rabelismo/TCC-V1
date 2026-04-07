@@ -1,5 +1,6 @@
 package com.ufc.tcc_gr.controller;
 
+import com.ufc.tcc_gr.dto.ModuleResponse;
 import com.ufc.tcc_gr.model.Module;
 import com.ufc.tcc_gr.repository.ModuleRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,19 +17,20 @@ public class ModuleController {
     private final ModuleRepository moduleRepo;
 
     @GetMapping
-    public List<Module> getAllModules() {
-        return moduleRepo.findAllByOrderByOrderIndexAsc();
+    public List<ModuleResponse> getAllModules() {
+        return moduleRepo.findAllByOrderByOrderIndexAsc()
+                .stream().map(ModuleResponse::from).toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Module> getModule(@PathVariable Long id) {
+    public ResponseEntity<ModuleResponse> getModule(@PathVariable Long id) {
         return moduleRepo.findById(id)
-                .map(ResponseEntity::ok)
+                .map(m -> ResponseEntity.ok(ModuleResponse.from(m)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Module createModule(@RequestBody Module module) {
-        return moduleRepo.save(module);
+    public ModuleResponse createModule(@RequestBody Module module) {
+        return ModuleResponse.from(moduleRepo.save(module));
     }
 }

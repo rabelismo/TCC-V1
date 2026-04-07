@@ -7,6 +7,7 @@ export interface Module {
   starterCode: string;
   expectedOutput: string;
   concept: string;
+  sampleInput?: string;
 }
 
 export interface CodeExecutionRequest {
@@ -23,10 +24,9 @@ export interface CodeExecutionResponse {
 
 export interface StudentProgress {
   id: number;
-  user: { id: number };
-  module: { id: number };
+  userId: number;
+  module: { id: number; title: string; orderIndex: number };
   status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
-  lastCodeSnapshot: string | null;
   attempts: number;
   startedAt: string | null;
   completedAt: string | null;
@@ -52,4 +52,20 @@ export interface SubmissionResult {
   passedCount: number;
   totalCount: number;
   criteria: CriterionResult[];
+}
+
+export interface AuthResponse {
+  token: string;
+  userId: number;
+  name: string;
+  email: string;
+  role: string;
+}
+
+export interface AuthUser {
+  token: string;
+  userId: number;
+  name: string;
+  email: string;
+  role: string;
 }

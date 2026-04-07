@@ -36,4 +36,7 @@ public class Module {
 
     @Column(length = 100)
     private String concept;
+
+    @Column(columnDefinition = "TEXT")
+    private String sampleInput;
 }
