@@ -9,7 +9,7 @@ RUN npm run build
 
 FROM nginx:alpine
 COPY --from=build /app/dist /usr/share/nginx/html
-ARG NGINX_CONF=nginx.conf
-COPY ${NGINX_CONF} /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.railway.conf /etc/nginx/nginx.railway.conf
 EXPOSE 80
-CMD ["/bin/sh", "-c", "envsubst '$PORT' < /etc/nginx/conf.d/default.conf > /tmp/default.conf && mv /tmp/default.conf /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"]
+CMD ["/bin/sh", "-c", "if [ -n \"$RAILWAY_ENVIRONMENT\" ]; then cp /etc/nginx/nginx.railway.conf /etc/nginx/conf.d/default.conf && envsubst '$PORT' < /etc/nginx/conf.d/default.conf > /tmp/default.conf && mv /tmp/default.conf /etc/nginx/conf.d/default.conf; fi && nginx -g 'daemon off;'"]

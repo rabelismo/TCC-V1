@@ -1,6 +1,7 @@
 [build]
+builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
-watchPatterns = ["src/**", "pom.xml", "Dockerfile"]
+watchPatterns = ["src/**", "pom.xml", "Dockerfile", "docker-entrypoint.sh"]
 
 [deploy]
 healthcheckPath = "/api/modules"
