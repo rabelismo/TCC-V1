@@ -1,4 +1,4 @@
-name: Deploy to Railway
+name: Deploy to Render
 
 on:
   workflow_run:
@@ -7,23 +7,18 @@ on:
     branches: [main]
 
 jobs:
-  deploy:
-    name: Deploy
+  deploy-backend:
+    name: Deploy Backend
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Trigger Render Deploy
+        run: curl -sf "${{ secrets.RENDER_BACKEND_DEPLOY_HOOK }}"
 
-      - name: Install Railway CLI
-        run: npm install -g @railway/cli
-
-      - name: Deploy Backend
-        run: railway up --service backend --detach
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-
-      - name: Deploy Frontend
-        run: railway up --service frontend --detach
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+  deploy-frontend:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Trigger Render Deploy
+        run: curl -sf "${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK }}"
