@@ -1,0 +1,12 @@
+[build]
+dockerfilePath = "Dockerfile"
+watchPatterns = ["src/**", "package.json", "Dockerfile", "nginx.conf", "nginx.railway.conf"]
+
+[build.args]
+NGINX_CONF = "nginx.railway.conf"
+
+[deploy]
+healthcheckPath = "/"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 3

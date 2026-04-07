@@ -17,6 +17,8 @@ RUN apt-get update && \
     chown -R appuser:appuser /app
 
 COPY --from=build --chown=appuser:appuser /app/target/*.jar app.jar
+COPY --chown=appuser:appuser docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
 
 USER appuser
 
@@ -25,4 +27,4 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
   CMD ["java", "-cp", "app.jar", "org.springframework.boot.loader.launch.PropertiesLauncher"] || exit 1
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
