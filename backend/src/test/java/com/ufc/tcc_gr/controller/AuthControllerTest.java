@@ -96,12 +96,12 @@ class AuthControllerTest {
     void login_wrongPassword() throws Exception {
         User user = new User("test@test.com", "Test", "hashed");
         when(userRepo.findByEmail("test@test.com")).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches("wrong", "hashed")).thenReturn(false);
+        when(passwordEncoder.matches("wrong123", "hashed")).thenReturn(false);
 
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                            {"email": "test@test.com", "password": "wrong"}
+                            {"email": "test@test.com", "password": "wrong123"}
                             """))
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.error").exists());
