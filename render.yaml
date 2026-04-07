@@ -23,7 +23,7 @@ services:
       - key: JWT_SECRET
         generateValue: true
       - key: CORS_ORIGINS
-        value: https://tcc-frontend.onrender.com
+        value: https://tcc-frontend-hw4v.onrender.com
       - key: PYTHON_COMMAND
         value: python
       - key: RENDER
@@ -38,6 +38,6 @@ services:
     plan: free
     envVars:
       - key: VITE_API_URL
-        value: https://tcc-backend.onrender.com/api
+        value: https://tcc-backend-wzy0.onrender.com/api
       - key: RENDER
         value: "true"
