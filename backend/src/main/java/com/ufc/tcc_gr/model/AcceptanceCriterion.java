@@ -28,8 +28,9 @@ public class AcceptanceCriterion {
     @Column(nullable = false)
     private String description;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private String type;
+    private CriterionType type;
 
     @Column(columnDefinition = "TEXT")
     private String input;

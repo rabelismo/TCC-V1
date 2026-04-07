@@ -1,0 +1,38 @@
+{
+  "orderIndex": 10,
+  "title": "O Limite de Tempo – O Laço While",
+  "concept": "WHILE_LOOP",
+  "description": "Use o laço while para criar o motor do jogo que roda por 9 turnos seguidos.",
+  "theoryMarkdown": "# Módulo 10: O Limite de Tempo\n\n## O laço `while`\n\nO `while` repete um bloco de código **enquanto** uma condição for verdadeira:\n\n```python\ncontador = 0\nwhile contador < 5:\n    print(f\"Volta {contador}\")\n    contador += 1\nprint(\"Fim!\")\n```\n\nSaída:\n```\nVolta 0\nVolta 1\nVolta 2\nVolta 3\nVolta 4\nFim!\n```\n\n## Contadores\n\nUm **contador** é uma variável que acompanha quantas vezes algo aconteceu:\n\n```python\njogadas = 0\nwhile jogadas < 9:  # O tabuleiro 3x3 tem no máximo 9 casas\n    # fazer jogada...\n    jogadas += 1     # Incrementa o contador\n```\n\n## O motor do jogo\n\nAgora vamos juntar tudo que aprendemos em um loop:\n\n```python\njogadas = 0\nwhile jogadas < 9:\n    imprimir_tabuleiro(tabuleiro)\n    linha = int(input(\"Linha: \"))\n    coluna = int(input(\"Coluna: \"))\n    if tabuleiro[linha][coluna] == \" \":\n        tabuleiro[linha][coluna] = jogador_atual\n        # alternar jogador...\n        jogadas += 1\n    else:\n        print(\"Casa ocupada!\")\n```\n\nNote que `jogadas` só incrementa quando a jogada é válida!\n\n## Sua missão\n\nCrie o game loop usando `while jogadas < 9` que recebe jogadas via `input()`, valida, alterna turnos e conta jogadas.",
+  "starterCode": "# Módulo 10: O Limite de Tempo\n# Crie o game loop com while\n\ntabuleiro = [[\" \"]*3 for _ in range(3)]\njogador_atual = \"X\"\njogadas = 0\n\ndef imprimir_tabuleiro(tab):\n    for i in range(3):\n        print(f\" {tab[i][0]} | {tab[i][1]} | {tab[i][2]} \")\n        if i < 2:\n            print(\"-----------\")\n\nprint(\"Jogo da Velha - 9 rodadas!\")\n\n# Crie o loop: while jogadas < 9\n# Dentro do loop:\n#   1. imprimir_tabuleiro(tabuleiro)\n#   2. print(f\"Vez do jogador {jogador_atual}\")\n#   3. linha = int(input(\"Linha (0-2): \"))\n#   4. coluna = int(input(\"Coluna (0-2): \"))\n#   5. Validar se a casa está vazia\n#   6. Se válida: colocar peça, alternar jogador, incrementar jogadas\n#   7. Se inválida: print(\"Casa ocupada! Tente novamente.\")\n\n# Após o loop:\n# imprimir_tabuleiro(tabuleiro)\n# print(\"Fim de jogo!\")\n",
+  "expectedOutput": "Jogo da Velha",
+  "criteria": [
+    {
+      "orderIndex": 1,
+      "type": "TEST_CASE",
+      "description": "O jogo deve processar jogadas alternando entre X e O",
+      "input": "0\n0\n0\n1\n0\n2\n1\n0\n1\n1\n1\n2\n2\n0\n2\n1\n2\n2\n",
+      "expectedOutput": "Vez do jogador X",
+      "hint": "Dentro do while, use print(f\"Vez do jogador {jogador_atual}\") para mostrar de quem é a vez.",
+      "hidden": false
+    },
+    {
+      "orderIndex": 2,
+      "type": "TEST_CASE",
+      "description": "O jogo deve exibir o tabuleiro com separadores",
+      "input": "0\n0\n0\n1\n0\n2\n1\n0\n1\n1\n1\n2\n2\n0\n2\n1\n2\n2\n",
+      "expectedOutput": "-----------",
+      "hint": "Chame imprimir_tabuleiro(tabuleiro) dentro do loop antes de pedir a jogada.",
+      "hidden": false
+    },
+    {
+      "orderIndex": 3,
+      "type": "TEST_CASE",
+      "description": "O jogo deve exibir \"Fim de jogo!\" ao encerrar",
+      "input": "0\n0\n0\n1\n0\n2\n1\n0\n1\n1\n1\n2\n2\n0\n2\n1\n2\n2\n",
+      "expectedOutput": "Fim de jogo!",
+      "hint": "Após o while, adicione print(\"Fim de jogo!\").",
+      "hidden": false
+    }
+  ]
+}

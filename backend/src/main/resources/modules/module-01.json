@@ -1,0 +1,35 @@
+{
+  "orderIndex": 1,
+  "title": "Olá, Jogador! – Saída de Dados",
+  "concept": "STRINGS",
+  "description": "Aprenda a usar print() e strings para exibir o título e as regras do Jogo da Velha.",
+  "theoryMarkdown": "# Módulo 1: Olá, Jogador!\n\n## O que é programar?\n\nProgramar é dar **instruções** ao computador. A primeira coisa que todo programa aprende a fazer é **falar** — ou seja, exibir informações na tela.\n\n## A função `print()`\n\nEm Python, usamos `print()` para mostrar texto no console:\n\n```python\nprint(\"Olá, mundo!\")\n```\n\nTudo que está entre aspas é chamado de **string** (cadeia de caracteres). Strings são textos.\n\n## Strings e aspas\n\nVocê pode usar aspas simples ou duplas:\n\n```python\nprint(\"Jogo da Velha\")\nprint('Bem-vindo!')\n```\n\n## Múltiplos prints\n\nCada `print()` exibe uma linha:\n\n```python\nprint(\"========================\")\nprint(\"   Jogo da Velha\")\nprint(\"========================\")\nprint(\"Regra: Alinhe 3 símbolos\")\n```\n\n## Sua missão\n\nUse `print()` para exibir uma tela de boas-vindas do Jogo da Velha com:\n- O título \"Jogo da Velha\"\n- Uma linha decorativa com `=`\n- As regras básicas do jogo",
+  "starterCode": "# Módulo 1: Olá, Jogador!\n# Use print() para criar a tela de boas-vindas do Jogo da Velha\n\n# 1. Imprima uma linha decorativa (ex: \"========================\")\n\n\n# 2. Imprima o título \"Jogo da Velha\"\n\n\n# 3. Imprima outra linha decorativa\n\n\n# 4. Imprima as regras do jogo\n# Ex: \"Dois jogadores se alternam\"\n# Ex: \"Alinhe 3 simbolos para vencer\"\n",
+  "expectedOutput": "Jogo da Velha",
+  "criteria": [
+    {
+      "orderIndex": 1,
+      "type": "OUTPUT_CONTAINS",
+      "description": "A saída deve conter o título \"Jogo da Velha\"",
+      "expectedOutput": "Jogo da Velha",
+      "hint": "Use print(\"Jogo da Velha\") para exibir o título.",
+      "hidden": false
+    },
+    {
+      "orderIndex": 2,
+      "type": "OUTPUT_CONTAINS",
+      "description": "A saída deve conter uma linha decorativa com \"====\"",
+      "expectedOutput": "====",
+      "hint": "Use print(\"========================\") para criar uma linha decorativa.",
+      "hidden": false
+    },
+    {
+      "orderIndex": 3,
+      "type": "OUTPUT_CONTAINS",
+      "description": "A saída deve mencionar as regras (palavra \"jogador\" ou \"vencer\")",
+      "expectedOutput": "vencer",
+      "hint": "Adicione um print() explicando que o objetivo é alinhar 3 símbolos para vencer.",
+      "hidden": false
+    }
+  ]
+}

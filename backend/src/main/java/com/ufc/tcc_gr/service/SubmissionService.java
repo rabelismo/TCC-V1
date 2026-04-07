@@ -1,8 +1,11 @@
 package com.ufc.tcc_gr.service;
 
 import com.ufc.tcc_gr.dto.*;
+import com.ufc.tcc_gr.exception.ResourceNotFoundException;
 import com.ufc.tcc_gr.model.AcceptanceCriterion;
+import com.ufc.tcc_gr.model.CriterionType;
 import com.ufc.tcc_gr.repository.AcceptanceCriterionRepository;
+import com.ufc.tcc_gr.repository.ModuleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,10 +19,15 @@ import java.util.List;
 public class SubmissionService {
 
     private final AcceptanceCriterionRepository criterionRepo;
+    private final ModuleRepository moduleRepo;
     private final PythonExecutionService pythonService;
     private final StudentProgressService progressService;
 
     public SubmissionResult evaluate(SubmissionRequest request) {
+        moduleRepo.findById(request.getModuleId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Módulo não encontrado: " + request.getModuleId()));
+
         List<AcceptanceCriterion> criteria = criterionRepo
                 .findByModuleIdOrderByOrderIndexAsc(request.getModuleId());
 
@@ -40,7 +48,7 @@ public class SubmissionService {
         for (AcceptanceCriterion criterion : criteria) {
             CodeExecutionResponse execution;
 
-            if ("TEST_CASE".equals(criterion.getType()) && criterion.getInput() != null) {
+            if (criterion.getType() == CriterionType.TEST_CASE && criterion.getInput() != null) {
                 execution = pythonService.execute(
                         new CodeExecutionRequest(request.getCode(), criterion.getInput()));
             } else {
@@ -94,14 +102,13 @@ public class SubmissionService {
     private boolean evaluateCriterion(AcceptanceCriterion criterion, CodeExecutionResponse execution) {
         if (execution.getExitCode() != 0) return false;
 
-        String actual = execution.getOutput().trim();
+        String actual = execution.getOutput() != null ? execution.getOutput().trim() : "";
         String expected = criterion.getExpectedOutput().trim();
 
         return switch (criterion.getType()) {
-            case "OUTPUT_CONTAINS" -> actual.contains(expected);
-            case "OUTPUT_EQUALS" -> actual.equals(expected);
-            case "TEST_CASE" -> actual.contains(expected);
-            default -> false;
+            case OUTPUT_CONTAINS -> actual.contains(expected);
+            case OUTPUT_EQUALS -> actual.equals(expected);
+            case TEST_CASE -> actual.contains(expected);
         };
     }
 

@@ -23,9 +23,12 @@ export async function fetchModule(id: number): Promise<Module> {
 }
 
 export async function executeCode(
-  request: CodeExecutionRequest
+  request: CodeExecutionRequest,
+  signal?: AbortSignal
 ): Promise<CodeExecutionResponse> {
-  const { data } = await api.post<CodeExecutionResponse>("/execute", request);
+  const { data } = await api.post<CodeExecutionResponse>("/execute", request, {
+    signal,
+  });
   return data;
 }
 

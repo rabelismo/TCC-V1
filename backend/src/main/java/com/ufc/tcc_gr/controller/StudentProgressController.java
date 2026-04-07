@@ -3,6 +3,7 @@ package com.ufc.tcc_gr.controller;
 import com.ufc.tcc_gr.dto.ProgressUpdateRequest;
 import com.ufc.tcc_gr.model.StudentProgress;
 import com.ufc.tcc_gr.service.StudentProgressService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class StudentProgressController {
     }
 
     @PostMapping
-    public ResponseEntity<StudentProgress> updateProgress(@RequestBody ProgressUpdateRequest request) {
+    public ResponseEntity<StudentProgress> updateProgress(@Valid @RequestBody ProgressUpdateRequest request) {
         return ResponseEntity.ok(progressService.updateProgress(request));
     }
 }

@@ -158,6 +158,23 @@ body,
   letter-spacing: 0.5px;
 }
 
+.sidebar-block-header {
+  padding: 12px 12px 6px;
+  margin-top: 4px;
+}
+
+.sidebar-block-header:first-child {
+  margin-top: 0;
+}
+
+.sidebar-block-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+}
+
 /* ─── Module View ─── */
 
 .module-view {
@@ -332,6 +349,15 @@ body,
 .btn-run:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.btn-stop {
+  background: var(--red);
+  color: #fff;
+}
+
+.btn-stop:hover {
+  background: #c0392b;
 }
 
 .btn-reset {

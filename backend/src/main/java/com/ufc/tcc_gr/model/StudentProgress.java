@@ -28,12 +28,14 @@ public class StudentProgress {
     @JsonIgnoreProperties({"theoryMarkdown", "starterCode"})
     private Module module;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
-    private String status = "NOT_STARTED";
+    private ProgressStatus status = ProgressStatus.NOT_STARTED;
 
     @Column(columnDefinition = "TEXT")
     private String lastCodeSnapshot;
 
+    @Column(nullable = false)
     private Integer attempts = 0;
 
     private LocalDateTime startedAt;

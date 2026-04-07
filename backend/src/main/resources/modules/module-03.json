@@ -1,0 +1,35 @@
+{
+  "orderIndex": 3,
+  "title": "A Linha do Tabuleiro – Listas Simples",
+  "concept": "ARRAYS_1D",
+  "description": "Aprenda o que é uma lista (array) e como acessar elementos pelo índice.",
+  "theoryMarkdown": "# Módulo 3: A Linha do Tabuleiro\n\n## O que é uma lista?\n\nUma **lista** é uma coleção ordenada de elementos. Em Python, usamos colchetes `[]`:\n\n```python\nfrutas = [\"maçã\", \"banana\", \"laranja\"]\nnumeros = [1, 2, 3, 4, 5]\n```\n\n## Índices\n\nCada elemento tem uma **posição** (índice), começando do **0**:\n\n```python\nfrutas = [\"maçã\", \"banana\", \"laranja\"]\n#  índice:    0        1         2\n\nprint(frutas[0])  # maçã\nprint(frutas[2])  # laranja\n```\n\n## Modificando elementos\n\nPodemos alterar um elemento pelo índice:\n\n```python\nfrutas[1] = \"uva\"\nprint(frutas)  # [\"maçã\", \"uva\", \"laranja\"]\n```\n\n## Listas com espaços vazios\n\nPodemos criar uma lista com espaços para representar uma **linha** do tabuleiro:\n\n```python\nlinha = [\" \", \" \", \" \"]\nlinha[0] = \"X\"\nprint(linha)  # [\"X\", \" \", \" \"]\n```\n\n## Sua missão\n\nCrie uma lista com 3 espaços vazios representando uma linha do tabuleiro, faça jogadas e exiba o resultado com prints individuais por posição.",
+  "starterCode": "# Módulo 3: A Linha do Tabuleiro\n# Crie uma lista simples representando uma linha do tabuleiro\n\n# 1. Crie uma lista com 3 espaços vazios (\" \")\nlinha = [\" \", \" \", \" \"]\n\n# 2. Coloque um \"X\" na primeira posição (índice 0)\n\n\n# 3. Coloque um \"O\" na última posição (índice 2)\n\n\n# 4. Exiba a lista atualizada\nprint(\"Linha atualizada:\", linha)\n\n# 5. Exiba cada posição individualmente\nprint(f\"Posicao 0: {linha[0]}\")\nprint(f\"Posicao 1: {linha[1]}\")\nprint(f\"Posicao 2: {linha[2]}\")\n",
+  "expectedOutput": "X",
+  "criteria": [
+    {
+      "orderIndex": 1,
+      "type": "OUTPUT_CONTAINS",
+      "description": "A posição 0 deve conter \"X\"",
+      "expectedOutput": "Posicao 0: X",
+      "hint": "Use linha[0] = \"X\" para colocar o X na primeira posição.",
+      "hidden": false
+    },
+    {
+      "orderIndex": 2,
+      "type": "OUTPUT_CONTAINS",
+      "description": "A posição 2 deve conter \"O\"",
+      "expectedOutput": "Posicao 2: O",
+      "hint": "Use linha[2] = \"O\" para colocar o O na última posição.",
+      "hidden": false
+    },
+    {
+      "orderIndex": 3,
+      "type": "OUTPUT_CONTAINS",
+      "description": "A lista atualizada deve conter tanto \"X\" quanto \"O\"",
+      "expectedOutput": "'X'",
+      "hint": "Certifique-se de atribuir linha[0] = \"X\" e linha[2] = \"O\" antes do print.",
+      "hidden": false
+    }
+  ]
+}

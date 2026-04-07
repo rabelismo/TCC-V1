@@ -19,6 +19,8 @@ import java.util.regex.Pattern;
 @Service
 public class PythonExecutionService {
 
+    private static final int MAX_OUTPUT_BYTES = 50 * 1024;
+
     private static final Set<String> BLOCKED_MODULES = Set.of(
         "os", "sys", "subprocess", "shutil", "socket", "http",
         "urllib", "requests", "ctypes", "signal", "threading",
@@ -73,8 +75,8 @@ public class PythonExecutionService {
                 }
             }
 
-            String stdout = readStream(process.getInputStream());
-            String stderr = readStream(process.getErrorStream());
+            String stdout = readStream(process.getInputStream(), MAX_OUTPUT_BYTES);
+            String stderr = readStream(process.getErrorStream(), MAX_OUTPUT_BYTES);
 
             boolean finished = process.waitFor(timeoutSeconds, TimeUnit.SECONDS);
             long elapsed = System.currentTimeMillis() - startTime;
@@ -93,7 +95,7 @@ public class PythonExecutionService {
 
         } catch (Exception e) {
             log.error("Erro ao executar código Python", e);
-            return new CodeExecutionResponse("", "Erro interno do servidor: " + e.getMessage(), 1, 0);
+            return new CodeExecutionResponse("", "Erro interno ao executar código.", 1, 0);
         } finally {
             if (tempFile != null) {
                 try { Files.deleteIfExists(tempFile); } catch (IOException ignored) {}
@@ -129,12 +131,22 @@ public class PythonExecutionService {
         return null;
     }
 
-    private String readStream(InputStream is) throws IOException {
+    private String readStream(InputStream is, int maxBytes) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
             StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line).append("\n");
+            char[] buffer = new char[4096];
+            int totalRead = 0;
+            int charsRead;
+            while ((charsRead = reader.read(buffer)) != -1) {
+                int remaining = maxBytes - totalRead;
+                if (remaining <= 0) {
+                    sb.append("\n... [saída truncada - limite de ")
+                      .append(maxBytes / 1024).append("KB atingido]");
+                    break;
+                }
+                int toAppend = Math.min(charsRead, remaining);
+                sb.append(buffer, 0, toAppend);
+                totalRead += toAppend;
             }
             return sb.toString();
         }

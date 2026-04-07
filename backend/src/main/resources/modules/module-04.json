@@ -1,0 +1,35 @@
+{
+  "orderIndex": 4,
+  "title": "A Grade Completa – Matrizes",
+  "concept": "ARRAYS_2D",
+  "description": "Expanda a lista simples para uma matriz 3x3 usando listas dentro de listas.",
+  "theoryMarkdown": "# Módulo 4: A Grade Completa\n\n## Listas dentro de listas\n\nUma **lista de listas** cria uma estrutura bidimensional — perfeita para uma grade:\n\n```python\nmatriz = [\n    [\"A\", \"B\", \"C\"],\n    [\"D\", \"E\", \"F\"],\n    [\"G\", \"H\", \"I\"]\n]\n```\n\n## Acessando elementos: [linha][coluna]\n\nUsamos **dois índices** — o primeiro para a linha, o segundo para a coluna:\n\n```python\nprint(matriz[0][0])  # A (linha 0, coluna 0)\nprint(matriz[1][2])  # F (linha 1, coluna 2)\nprint(matriz[2][1])  # H (linha 2, coluna 1)\n```\n\nVisualizando como uma grade:\n\n```\n         col0  col1  col2\nlin0  [  \"A\",  \"B\",  \"C\"  ]\nlin1  [  \"D\",  \"E\",  \"F\"  ]\nlin2  [  \"G\",  \"H\",  \"I\"  ]\n```\n\n## Modificando elementos\n\n```python\nmatriz[1][1] = \"X\"  # Muda o centro para \"X\"\n```\n\n## O tabuleiro do Jogo da Velha\n\nUm tabuleiro 3x3 vazio:\n\n```python\ntabuleiro = [\n    [\" \", \" \", \" \"],\n    [\" \", \" \", \" \"],\n    [\" \", \" \", \" \"]\n]\n```\n\n## Sua missão\n\nCrie a matriz 3x3 do tabuleiro, faça jogadas com [linha][coluna] e exiba o resultado.",
+  "starterCode": "# Módulo 4: A Grade Completa\n# Crie o tabuleiro 3x3 usando listas bidimensionais\n\n# 1. Crie o tabuleiro 3x3 com espaços vazios\ntabuleiro = [\n    [\" \", \" \", \" \"],\n    [\" \", \" \", \" \"],\n    [\" \", \" \", \" \"]\n]\n\n# 2. Exiba o tabuleiro vazio (linha por linha)\nprint(\"Tabuleiro vazio:\")\nprint(tabuleiro[0])\nprint(tabuleiro[1])\nprint(tabuleiro[2])\n\n# 3. Faça algumas jogadas usando [linha][coluna]\n# Coloque \"X\" no centro (linha 1, coluna 1)\n\n\n# Coloque \"O\" no canto superior esquerdo (linha 0, coluna 0)\n\n\n# 4. Exiba o tabuleiro atualizado\nprint(\"Tabuleiro com jogadas:\")\nprint(tabuleiro[0])\nprint(tabuleiro[1])\nprint(tabuleiro[2])\n",
+  "expectedOutput": "Tabuleiro",
+  "criteria": [
+    {
+      "orderIndex": 1,
+      "type": "OUTPUT_CONTAINS",
+      "description": "O tabuleiro atualizado deve conter \"X\" no centro",
+      "expectedOutput": "'X'",
+      "hint": "Use tabuleiro[1][1] = \"X\" para colocar o X no centro. O print da lista mostrará 'X'.",
+      "hidden": false
+    },
+    {
+      "orderIndex": 2,
+      "type": "OUTPUT_CONTAINS",
+      "description": "O tabuleiro atualizado deve conter \"O\" no canto",
+      "expectedOutput": "'O'",
+      "hint": "Use tabuleiro[0][0] = \"O\" para colocar o O no canto superior esquerdo.",
+      "hidden": false
+    },
+    {
+      "orderIndex": 3,
+      "type": "OUTPUT_CONTAINS",
+      "description": "Deve exibir o tabuleiro vazio e o tabuleiro com jogadas",
+      "expectedOutput": "Tabuleiro com jogadas:",
+      "hint": "Mantenha os dois blocos de print: um para o tabuleiro vazio e outro para o atualizado.",
+      "hidden": false
+    }
+  ]
+}

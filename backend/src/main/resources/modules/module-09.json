@@ -1,0 +1,35 @@
+{
+  "orderIndex": 9,
+  "title": "De Quem é a Vez? – Alternância de Turno",
+  "concept": "LOGIC_OPERATORS",
+  "description": "Use lógica de alternância para trocar entre os jogadores X e O a cada turno.",
+  "theoryMarkdown": "# Módulo 9: De Quem é a Vez?\n\n## Lógica de estado alternado\n\nEm um jogo de turnos, precisamos **alternar** entre os jogadores. Podemos usar uma variável para controlar de quem é a vez:\n\n```python\njogador_atual = \"X\"\n```\n\n## Alternando com if/else\n\nApós cada jogada bem-sucedida, trocamos o jogador:\n\n```python\nif jogador_atual == \"X\":\n    jogador_atual = \"O\"\nelse:\n    jogador_atual = \"X\"\n```\n\n## Operadores lógicos\n\nPython tem três operadores lógicos:\n\n| Operador | Significado | Exemplo |\n|----------|------------|--------|\n| `and` | E (ambos verdadeiros) | `x > 0 and x < 10` |\n| `or` | OU (pelo menos um) | `x == \"X\" or x == \"O\"` |\n| `not` | NÃO (inverte) | `not casa_vazia` |\n\n## Combinando validação e alternância\n\n```python\njogador_atual = \"X\"\n\nif tabuleiro[linha][coluna] == \" \":\n    tabuleiro[linha][coluna] = jogador_atual\n    print(f\"Jogador {jogador_atual} jogou em [{linha}][{coluna}]\")\n    if jogador_atual == \"X\":\n        jogador_atual = \"O\"\n    else:\n        jogador_atual = \"X\"\nelse:\n    print(\"Casa ocupada! Tente novamente.\")\n```\n\n## Sua missão\n\nImplemente a alternância de turno: após cada jogada válida, o turno muda de X para O e vice-versa.",
+  "starterCode": "# Módulo 9: De Quem é a Vez?\n# Implemente a alternância de turno entre X e O\n\ntabuleiro = [\n    [\" \", \" \", \" \"],\n    [\" \", \" \", \" \"],\n    [\" \", \" \", \" \"]\n]\n\ndef imprimir_tabuleiro(tab):\n    for i in range(3):\n        print(f\" {tab[i][0]} | {tab[i][1]} | {tab[i][2]} \")\n        if i < 2:\n            print(\"-----------\")\n\n# 1. Crie a variável jogador_atual começando com \"X\"\njogador_atual = \"X\"\n\ndef fazer_jogada(tab, linha, coluna):\n    global jogador_atual\n    if tab[linha][coluna] == \" \":\n        tab[linha][coluna] = jogador_atual\n        print(f\"Jogador {jogador_atual} jogou em [{linha}][{coluna}]\")\n        # 2. Alterne o jogador: se era \"X\" vira \"O\", senão vira \"X\"\n        # Escreva o if/else de alternância aqui\n\n    else:\n        print(\"Casa ocupada! Tente novamente.\")\n\n# Teste: simule 4 jogadas alternadas\nfazer_jogada(tabuleiro, 1, 1)  # X joga no centro\nfazer_jogada(tabuleiro, 0, 0)  # O joga no canto\nfazer_jogada(tabuleiro, 0, 2)  # X joga\nfazer_jogada(tabuleiro, 2, 0)  # O joga\n\nimprimir_tabuleiro(tabuleiro)\n",
+  "expectedOutput": "Jogador X jogou",
+  "criteria": [
+    {
+      "orderIndex": 1,
+      "type": "OUTPUT_CONTAINS",
+      "description": "A primeira jogada deve ser do jogador X",
+      "expectedOutput": "Jogador X jogou em [1][1]",
+      "hint": "Certifique-se de que jogador_atual começa como \"X\" e que o print mostra qual jogador jogou.",
+      "hidden": false
+    },
+    {
+      "orderIndex": 2,
+      "type": "OUTPUT_CONTAINS",
+      "description": "A segunda jogada deve ser do jogador O (alternância funcionando)",
+      "expectedOutput": "Jogador O jogou em [0][0]",
+      "hint": "Após uma jogada de X, use: if jogador_atual == \"X\": jogador_atual = \"O\" else: jogador_atual = \"X\"",
+      "hidden": false
+    },
+    {
+      "orderIndex": 3,
+      "type": "OUTPUT_CONTAINS",
+      "description": "A terceira jogada deve voltar a ser do jogador X",
+      "expectedOutput": "Jogador X jogou em [0][2]",
+      "hint": "Se a alternância funciona, após O jogar, volta a ser X. Verifique o if/else.",
+      "hidden": false
+    }
+  ]
+}

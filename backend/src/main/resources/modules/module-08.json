@@ -1,0 +1,35 @@
+{
+  "orderIndex": 8,
+  "title": "Protegendo a Casa – Condicional If/Else",
+  "concept": "IF_ELSE",
+  "description": "Use if/else para verificar se uma casa está vazia antes de colocar a peça.",
+  "theoryMarkdown": "# Módulo 8: Protegendo a Casa\n\n## Estruturas condicionais\n\nO `if/else` permite que o programa **tome decisões**:\n\n```python\nidade = 18\nif idade >= 18:\n    print(\"Maior de idade\")\nelse:\n    print(\"Menor de idade\")\n```\n\n## Operadores de comparação\n\n| Operador | Significado |\n|----------|------------|\n| `==` | Igual a |\n| `!=` | Diferente de |\n| `>` | Maior que |\n| `<` | Menor que |\n| `>=` | Maior ou igual |\n| `<=` | Menor ou igual |\n\n## Expressões booleanas\n\nComparações resultam em `True` ou `False`:\n\n```python\nprint(5 == 5)   # True\nprint(\" \" == \" \")  # True\nprint(\"X\" == \" \")  # False\n```\n\n## Protegendo o tabuleiro\n\nAntes de colocar uma peça, devemos verificar se a casa está vazia:\n\n```python\nif tabuleiro[linha][coluna] == \" \":\n    tabuleiro[linha][coluna] = \"X\"\n    print(\"Jogada realizada!\")\nelse:\n    print(\"Erro: casa ja ocupada!\")\n```\n\n## Sua missão\n\nAdicione validação de casa ocupada ao mecanismo de jogada. Teste com casas vazias e ocupadas.",
+  "starterCode": "# Módulo 8: Protegendo a Casa\n# Use if/else para validar jogadas\n\ntabuleiro = [\n    [\"X\", \" \", \" \"],\n    [\" \", \" \", \" \"],\n    [\" \", \" \", \"O\"]\n]\n\ndef imprimir_tabuleiro(tab):\n    for i in range(3):\n        print(f\" {tab[i][0]} | {tab[i][1]} | {tab[i][2]} \")\n        if i < 2:\n            print(\"-----------\")\n\ndef fazer_jogada(tab, linha, coluna, simbolo):\n    # Verifique se a casa está vazia antes de colocar a peça\n    # Se vazia: coloque o símbolo e print(\"Jogada realizada!\")\n    # Se ocupada: print(\"Erro: casa ja ocupada!\")\n    pass\n\n# Teste 1: Jogada em casa vazia (deve funcionar)\nprint(\"Teste 1 - Casa vazia [1][1]:\")\nfazer_jogada(tabuleiro, 1, 1, \"X\")\nimprimir_tabuleiro(tabuleiro)\n\n# Teste 2: Jogada em casa ocupada (deve dar erro)\nprint(\"Teste 2 - Casa ocupada [0][0]:\")\nfazer_jogada(tabuleiro, 0, 0, \"O\")\n\n# Teste 3: Outra jogada válida\nprint(\"Teste 3 - Casa vazia [0][1]:\")\nfazer_jogada(tabuleiro, 0, 1, \"O\")\nimprimir_tabuleiro(tabuleiro)\n",
+  "expectedOutput": "Jogada realizada!",
+  "criteria": [
+    {
+      "orderIndex": 1,
+      "type": "OUTPUT_CONTAINS",
+      "description": "Jogada em casa vazia deve exibir \"Jogada realizada!\"",
+      "expectedOutput": "Jogada realizada!",
+      "hint": "Dentro de fazer_jogada, use: if tab[linha][coluna] == \" \": tab[linha][coluna] = simbolo e print(\"Jogada realizada!\")",
+      "hidden": false
+    },
+    {
+      "orderIndex": 2,
+      "type": "OUTPUT_CONTAINS",
+      "description": "Jogada em casa ocupada deve exibir \"Erro: casa ja ocupada!\"",
+      "expectedOutput": "Erro: casa ja ocupada!",
+      "hint": "No else da verificação, use print(\"Erro: casa ja ocupada!\").",
+      "hidden": false
+    },
+    {
+      "orderIndex": 3,
+      "type": "OUTPUT_CONTAINS",
+      "description": "O tabuleiro deve mostrar o \"X\" no centro após a jogada válida no Teste 1",
+      "expectedOutput": " | X | ",
+      "hint": "Dentro do if, faça tab[linha][coluna] = simbolo para que a peça apareça no tabuleiro.",
+      "hidden": false
+    }
+  ]
+}

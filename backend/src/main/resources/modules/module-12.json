@@ -1,0 +1,43 @@
+{
+  "orderIndex": 12,
+  "title": "Vitória na Horizontal – Verificação Direta",
+  "concept": "AND_OPERATOR",
+  "description": "Use múltiplas condições com AND para verificar se um jogador venceu em uma linha.",
+  "theoryMarkdown": "# Módulo 12: Vitória na Horizontal\n\n## Condições compostas com `and`\n\nPodemos combinar várias condições em uma só:\n\n```python\nif nota >= 7 and frequencia >= 75:\n    print(\"Aprovado!\")\n```\n\nAmbas devem ser `True` para entrar no `if`.\n\n## Verificando uma linha do tabuleiro\n\nPara o jogador X vencer na primeira linha, **todas as 3 posições** devem ser \"X\":\n\n```python\nif tab[0][0] == \"X\" and tab[0][1] == \"X\" and tab[0][2] == \"X\":\n    print(\"X venceu na primeira linha!\")\n```\n\n## O problema: generalizar\n\nMas também precisamos verificar se são todas \"O\". E precisamos que **não sejam vazias**:\n\n```python\nif tab[0][0] == tab[0][1] == tab[0][2] and tab[0][0] != \" \":\n    print(f\"{tab[0][0]} venceu na primeira linha!\")\n```\n\nEssa forma é mais elegante: compara se os três são iguais entre si E se o primeiro não é vazio.\n\n## Verificação completa (abordagem direta)\n\nPara verificar **todas** as possibilidades de vitória, escrevemos um if para cada:\n\n```python\n# Linhas\nif tab[0][0] == tab[0][1] == tab[0][2] != \" \":\n    vencedor = tab[0][0]\nif tab[1][0] == tab[1][1] == tab[1][2] != \" \":\n    vencedor = tab[1][0]\nif tab[2][0] == tab[2][1] == tab[2][2] != \" \":\n    vencedor = tab[2][0]\n```\n\n## Sua missão\n\nCrie a função `verificar_vencedor(tab)` que verifica vitória nas **3 linhas, 3 colunas e 2 diagonais** usando ifs diretos.",
+  "starterCode": "# Módulo 12: Vitória na Horizontal\n# Verifique vitória usando condições compostas com AND\n\ndef verificar_vencedor(tab):\n    # Verifique as 3 linhas\n    # Dica: if tab[0][0] == tab[0][1] == tab[0][2] != \" \":\n    #           return tab[0][0]\n    # Repita para linhas 1 e 2\n    \n    # Verifique as 3 colunas\n    # Dica: tab[0][0] == tab[1][0] == tab[2][0] != \" \"\n    \n    # Verifique as 2 diagonais\n    # Diagonal principal: tab[0][0], tab[1][1], tab[2][2]\n    # Diagonal secundária: tab[0][2], tab[1][1], tab[2][0]\n    \n    return None\n\n# Testes\ntab1 = [[\"X\",\"X\",\"X\"],[\" \",\"O\",\" \"],[\"O\",\" \",\" \"]]\nprint(\"Teste linha:\", verificar_vencedor(tab1))\n\ntab2 = [[\"O\",\" \",\"X\"],[\"O\",\" \",\" \"],[\"O\",\"X\",\"X\"]]\nprint(\"Teste coluna:\", verificar_vencedor(tab2))\n\ntab3 = [[\"X\",\"O\",\" \"],[\" \",\"X\",\"O\"],[\" \",\" \",\"X\"]]\nprint(\"Teste diagonal:\", verificar_vencedor(tab3))\n\ntab4 = [[\"X\",\"O\",\" \"],[\" \",\"X\",\"O\"],[\" \",\" \",\" \"]]\nprint(\"Teste sem vencedor:\", verificar_vencedor(tab4))\n",
+  "expectedOutput": "X",
+  "criteria": [
+    {
+      "orderIndex": 1,
+      "type": "OUTPUT_CONTAINS",
+      "description": "Deve detectar vitória na linha horizontal",
+      "expectedOutput": "Teste linha: X",
+      "hint": "Adicione: if tab[0][0] == tab[0][1] == tab[0][2] != \" \": return tab[0][0]. Repita para linhas 1 e 2.",
+      "hidden": false
+    },
+    {
+      "orderIndex": 2,
+      "type": "OUTPUT_CONTAINS",
+      "description": "Deve detectar vitória na coluna vertical",
+      "expectedOutput": "Teste coluna: O",
+      "hint": "Adicione: if tab[0][0] == tab[1][0] == tab[2][0] != \" \": return tab[0][0] (e repita para colunas 1 e 2).",
+      "hidden": false
+    },
+    {
+      "orderIndex": 3,
+      "type": "OUTPUT_CONTAINS",
+      "description": "Deve detectar vitória na diagonal",
+      "expectedOutput": "Teste diagonal: X",
+      "hint": "Adicione: if tab[0][0] == tab[1][1] == tab[2][2] != \" \": return tab[0][0]",
+      "hidden": false
+    },
+    {
+      "orderIndex": 4,
+      "type": "OUTPUT_CONTAINS",
+      "description": "Deve retornar None quando não há vencedor",
+      "expectedOutput": "Teste sem vencedor: None",
+      "hint": "Se nenhum if detectar vitória, a função retorna None no final.",
+      "hidden": false
+    }
+  ]
+}

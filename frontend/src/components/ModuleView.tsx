@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Play, RotateCcw, Send } from "lucide-react";
+import { useRef, useState } from "react";
+import { Play, RotateCcw, Send, Square } from "lucide-react";
 import TheoryPanel from "./TheoryPanel";
 import CodeEditor from "./CodeEditor";
 import TerminalOutput from "./TerminalOutput";
@@ -19,6 +19,7 @@ export default function ModuleView({ module }: ModuleViewProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [executionTimeMs, setExecutionTimeMs] = useState<number | undefined>();
   const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   const handleRun = async () => {
     setIsRunning(true);
@@ -27,16 +28,28 @@ export default function ModuleView({ module }: ModuleViewProps) {
     setExecutionTimeMs(undefined);
     setSubmissionResult(null);
 
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     try {
-      const result = await executeCode({ code });
+      const result = await executeCode({ code }, controller.signal);
       setOutput(result.output);
       setError(result.error);
       setExecutionTimeMs(result.executionTimeMs);
-    } catch {
-      setError("Erro de conexão com o servidor. Verifique se o backend está rodando.");
+    } catch (err) {
+      if (controller.signal.aborted) {
+        setError("Execução interrompida pelo usuário.");
+      } else {
+        setError("Erro de conexão com o servidor. Verifique se o backend está rodando.");
+      }
     } finally {
+      abortRef.current = null;
       setIsRunning(false);
     }
+  };
+
+  const handleStop = () => {
+    abortRef.current?.abort();
   };
 
   const handleSubmit = async () => {
@@ -77,10 +90,17 @@ export default function ModuleView({ module }: ModuleViewProps) {
 
         <div className="panel-code">
           <div className="code-toolbar">
-            <button className="btn btn-run" onClick={handleRun} disabled={isRunning || isSubmitting}>
-              <Play size={16} />
-              {isRunning ? "Executando..." : "Executar"}
-            </button>
+            {isRunning ? (
+              <button className="btn btn-stop" onClick={handleStop}>
+                <Square size={16} />
+                Parar
+              </button>
+            ) : (
+              <button className="btn btn-run" onClick={handleRun} disabled={isSubmitting}>
+                <Play size={16} />
+                Executar
+              </button>
+            )}
             <button className="btn btn-submit" onClick={handleSubmit} disabled={isRunning || isSubmitting}>
               <Send size={16} />
               {isSubmitting ? "Avaliando..." : "Submeter"}

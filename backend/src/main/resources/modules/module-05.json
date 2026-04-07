@@ -1,0 +1,43 @@
+{
+  "orderIndex": 5,
+  "title": "O Pintor do Tabuleiro – Funções",
+  "concept": "FUNCTIONS",
+  "description": "Aprenda a criar funções para organizar o código e exibir o tabuleiro formatado.",
+  "theoryMarkdown": "# Módulo 5: O Pintor do Tabuleiro\n\n## O que é uma função?\n\nUma **função** é um bloco de código reutilizável que faz uma tarefa específica. Definimos com `def`:\n\n```python\ndef saudacao():\n    print(\"Olá!\")\n    print(\"Bem-vindo ao jogo!\")\n\nsaudacao()  # Chama a função\nsaudacao()  # Pode chamar quantas vezes quiser\n```\n\n## Parâmetros\n\nFunções podem receber **dados de entrada** (parâmetros):\n\n```python\ndef saudacao(nome):\n    print(f\"Olá, {nome}!\")\n\nsaudacao(\"Carlos\")  # Olá, Carlos!\nsaudacao(\"Maria\")   # Olá, Maria!\n```\n\n## Formatando o tabuleiro\n\nVamos criar uma função que transforma nossa matriz em algo visual:\n\n```\n   |   |   \n-----------\n   |   |   \n-----------\n   |   |   \n```\n\nA ideia é usar `|` para separar colunas e `---` para separar linhas:\n\n```python\ndef imprimir_tabuleiro(tab):\n    for i in range(3):\n        print(f\" {tab[i][0]} | {tab[i][1]} | {tab[i][2]} \")\n        if i < 2:\n            print(\"-----------\")\n```\n\n> Não se preocupe com o `for` e o `range` por enquanto — vamos aprender isso em detalhes mais adiante. Por ora, entenda que essa estrutura percorre as 3 linhas do tabuleiro.\n\n## Sua missão\n\nCrie a função `imprimir_tabuleiro(tab)` que exibe a matriz de forma bonita com `|` e `-`.",
+  "starterCode": "# Módulo 5: O Pintor do Tabuleiro\n# Crie uma função para exibir o tabuleiro formatado\n\ntabuleiro = [\n    [\" \", \" \", \" \"],\n    [\" \", \" \", \" \"],\n    [\" \", \" \", \" \"]\n]\n\n# 1. Crie a função imprimir_tabuleiro(tab)\n# Ela deve exibir o tabuleiro assim:\n#  X | O |   \n# -----------\n#    | X |   \n# -----------\n#    |   | O \ndef imprimir_tabuleiro(tab):\n    # Dica: para cada linha i (0, 1, 2):\n    #   print(f\" {tab[i][0]} | {tab[i][1]} | {tab[i][2]} \")\n    #   se não for a última linha, print(\"-----------\")\n    pass\n\n# 2. Faça jogadas de teste\ntabuleiro[0][0] = \"X\"\ntabuleiro[1][1] = \"X\"\ntabuleiro[2][2] = \"O\"\n\n# 3. Chame a função para ver o resultado\nimprimir_tabuleiro(tabuleiro)\n",
+  "expectedOutput": "|",
+  "criteria": [
+    {
+      "orderIndex": 1,
+      "type": "OUTPUT_CONTAINS",
+      "description": "O tabuleiro deve usar \"|\" para separar colunas",
+      "expectedOutput": " | ",
+      "hint": "Dentro da função, use print(f\" {tab[i][0]} | {tab[i][1]} | {tab[i][2]} \").",
+      "hidden": false
+    },
+    {
+      "orderIndex": 2,
+      "type": "OUTPUT_CONTAINS",
+      "description": "O tabuleiro deve usar \"---\" para separar linhas",
+      "expectedOutput": "-----------",
+      "hint": "Use print(\"-----------\") entre as linhas do tabuleiro (quando i < 2).",
+      "hidden": false
+    },
+    {
+      "orderIndex": 3,
+      "type": "OUTPUT_CONTAINS",
+      "description": "O tabuleiro deve exibir o \"X\" na primeira linha formatada",
+      "expectedOutput": " X | ",
+      "hint": "Certifique-se de que a função imprime o conteúdo real de tab[i][j], não strings fixas.",
+      "hidden": false
+    },
+    {
+      "orderIndex": 4,
+      "type": "OUTPUT_CONTAINS",
+      "description": "O tabuleiro deve exibir o \"O\" na última linha formatada",
+      "expectedOutput": " | O ",
+      "hint": "A função deve ler os valores de tab[i][j]. O 'O' está em tabuleiro[2][2].",
+      "hidden": false
+    }
+  ]
+}

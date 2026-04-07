@@ -1,7 +1,9 @@
 package com.ufc.tcc_gr.service;
 
 import com.ufc.tcc_gr.dto.ProgressUpdateRequest;
+import com.ufc.tcc_gr.exception.ResourceNotFoundException;
 import com.ufc.tcc_gr.model.Module;
+import com.ufc.tcc_gr.model.ProgressStatus;
 import com.ufc.tcc_gr.model.StudentProgress;
 import com.ufc.tcc_gr.model.User;
 import com.ufc.tcc_gr.repository.ModuleRepository;
@@ -29,9 +31,9 @@ public class StudentProgressService {
     @Transactional
     public StudentProgress updateProgress(ProgressUpdateRequest request) {
         User user = userRepo.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado: " + request.getUserId()));
         Module module = moduleRepo.findById(request.getModuleId())
-                .orElseThrow(() -> new IllegalArgumentException("Módulo não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Módulo não encontrado: " + request.getModuleId()));
 
         StudentProgress progress = progressRepo
                 .findByUserIdAndModuleId(request.getUserId(), request.getModuleId())
@@ -42,14 +44,14 @@ public class StudentProgressService {
                 });
 
         if (request.getStatus() != null) {
-            progress.setStatus(request.getStatus());
+            progress.setStatus(ProgressStatus.valueOf(request.getStatus()));
         }
         if (request.getCodeSnapshot() != null) {
             progress.setLastCodeSnapshot(request.getCodeSnapshot());
         }
         progress.setAttempts(progress.getAttempts() + 1);
 
-        if ("COMPLETED".equals(request.getStatus()) && progress.getCompletedAt() == null) {
+        if (ProgressStatus.COMPLETED == progress.getStatus() && progress.getCompletedAt() == null) {
             progress.setCompletedAt(LocalDateTime.now());
         }
 

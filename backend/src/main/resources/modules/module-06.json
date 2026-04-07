@@ -1,0 +1,43 @@
+{
+  "orderIndex": 6,
+  "title": "A Primeira Peça – Modificação de Estado",
+  "concept": "STATE_MUTATION",
+  "description": "Entenda como modificar dados na memória reatribuindo valores na matriz do tabuleiro.",
+  "theoryMarkdown": "# Módulo 6: A Primeira Peça\n\n## Estado do programa\n\nO **estado** de um programa são todos os dados armazenados na memória em um dado momento. No nosso jogo, o estado principal é o **tabuleiro**.\n\n## Modificando o estado\n\nQuando fazemos `tabuleiro[1][1] = \"X\"`, estamos **mudando o estado** do programa. O tabuleiro antes:\n\n```\n   |   |   \n-----------\n   |   |   \n-----------\n   |   |   \n```\n\nDepois de `tabuleiro[1][1] = \"X\"`:\n\n```\n   |   |   \n-----------\n   | X |   \n-----------\n   |   |   \n```\n\n## Visualizando a mudança\n\nÉ importante **ver** a mudança. Por isso, chamamos `imprimir_tabuleiro()` antes e depois da modificação:\n\n```python\nprint(\"Antes:\")\nimprimir_tabuleiro(tabuleiro)\n\ntabuleiro[1][1] = \"X\"\n\nprint(\"Depois:\")\nimprimir_tabuleiro(tabuleiro)\n```\n\n## Sua missão\n\nPartindo do tabuleiro vazio, coloque um \"X\" no centro, imprima, coloque um \"O\" em outra posição e imprima novamente para observar a mudança de estado.",
+  "starterCode": "# Módulo 6: A Primeira Peça\n# Modifique o tabuleiro e observe a mudança de estado\n\ntabuleiro = [\n    [\" \", \" \", \" \"],\n    [\" \", \" \", \" \"],\n    [\" \", \" \", \" \"]\n]\n\ndef imprimir_tabuleiro(tab):\n    for i in range(3):\n        print(f\" {tab[i][0]} | {tab[i][1]} | {tab[i][2]} \")\n        if i < 2:\n            print(\"-----------\")\n\n# 1. Exiba o tabuleiro vazio\nprint(\"Estado inicial:\")\nimprimir_tabuleiro(tabuleiro)\n\n# 2. Coloque um \"X\" no centro do tabuleiro (linha 1, coluna 1)\n\n\n# 3. Exiba o tabuleiro após a primeira jogada\nprint(\"Apos jogada do X:\")\nimprimir_tabuleiro(tabuleiro)\n\n# 4. Coloque um \"O\" no canto superior direito (linha 0, coluna 2)\n\n\n# 5. Exiba o tabuleiro após a segunda jogada\nprint(\"Apos jogada do O:\")\nimprimir_tabuleiro(tabuleiro)\n",
+  "expectedOutput": "Estado inicial:",
+  "criteria": [
+    {
+      "orderIndex": 1,
+      "type": "OUTPUT_CONTAINS",
+      "description": "O tabuleiro deve exibir o \"X\" no centro após a primeira jogada",
+      "expectedOutput": " | X | ",
+      "hint": "Use tabuleiro[1][1] = \"X\" antes do segundo imprimir_tabuleiro. A linha do meio deve mostrar \" | X | \".",
+      "hidden": false
+    },
+    {
+      "orderIndex": 2,
+      "type": "OUTPUT_CONTAINS",
+      "description": "O tabuleiro deve exibir o \"O\" após a segunda jogada",
+      "expectedOutput": " | O",
+      "hint": "Use tabuleiro[0][2] = \"O\" antes do terceiro imprimir_tabuleiro. A primeira linha deve mostrar o O.",
+      "hidden": false
+    },
+    {
+      "orderIndex": 3,
+      "type": "OUTPUT_CONTAINS",
+      "description": "O tabuleiro final deve conter tanto \"X\" quanto \"O\" simultaneamente",
+      "expectedOutput": "Apos jogada do O:",
+      "hint": "Certifique-se de imprimir o tabuleiro após a segunda jogada com print(\"Apos jogada do O:\").",
+      "hidden": false
+    },
+    {
+      "orderIndex": 4,
+      "type": "OUTPUT_CONTAINS",
+      "description": "O tabuleiro deve usar separadores visuais",
+      "expectedOutput": "-----------",
+      "hint": "Certifique-se de que a função imprimir_tabuleiro está funcionando corretamente.",
+      "hidden": true
+    }
+  ]
+}
