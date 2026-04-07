@@ -641,3 +641,55 @@ body,
 .criterion-hint strong {
   color: var(--yellow);
 }
+
+/* ─── Sidebar Progress ─── */
+
+.sidebar-progress-summary {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.progress-bar-track {
+  height: 6px;
+  background: var(--bg-tertiary);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 3px;
+  transition: width 0.4s ease;
+  min-width: 0;
+}
+
+.progress-label {
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.sidebar-item.completed .sidebar-item-badge {
+  background: rgba(46, 204, 113, 0.15);
+}
+
+.sidebar-item.completed .check-icon {
+  color: var(--green);
+}
+
+.sidebar-item.completed .sidebar-item-title {
+  color: var(--text-muted);
+}
+
+.sidebar-item.active.completed .sidebar-item-badge {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.sidebar-item.active.completed .check-icon {
+  color: #fff;
+}

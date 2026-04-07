@@ -1,10 +1,11 @@
-import { BookOpen } from "lucide-react";
+import { BookOpen, CheckCircle } from "lucide-react";
 import type { Module } from "../types";
 
 interface ModuleSidebarProps {
   modules: Module[];
   activeModuleId: number | null;
   onSelectModule: (id: number) => void;
+  completedModuleIds: Set<number>;
 }
 
 const conceptIcons: Record<string, string> = {
@@ -52,8 +53,11 @@ export default function ModuleSidebar({
   modules,
   activeModuleId,
   onSelectModule,
+  completedModuleIds,
 }: ModuleSidebarProps) {
   const sorted = [...modules].sort((a, b) => a.orderIndex - b.orderIndex);
+  const totalCompleted = completedModuleIds.size;
+  const totalModules = modules.length;
 
   let lastBlockLabel = "";
 
@@ -63,12 +67,30 @@ export default function ModuleSidebar({
         <BookOpen size={20} />
         <h2>Módulos</h2>
       </div>
+
+      {totalModules > 0 && (
+        <div className="sidebar-progress-summary">
+          <div className="progress-bar-track">
+            <div
+              className="progress-bar-fill"
+              style={{
+                width: `${(totalCompleted / totalModules) * 100}%`,
+              }}
+            />
+          </div>
+          <span className="progress-label">
+            {totalCompleted}/{totalModules} concluídos
+          </span>
+        </div>
+      )}
+
       <nav className="sidebar-nav">
         {sorted.map((mod) => {
           const block = getBlockForModule(mod.orderIndex);
           const blockLabel = block?.label ?? "";
           const showBlockHeader = blockLabel !== lastBlockLabel;
           lastBlockLabel = blockLabel;
+          const isCompleted = completedModuleIds.has(mod.id);
 
           return (
             <div key={mod.id}>
@@ -78,11 +100,15 @@ export default function ModuleSidebar({
                 </div>
               )}
               <button
-                className={`sidebar-item ${mod.id === activeModuleId ? "active" : ""}`}
+                className={`sidebar-item ${mod.id === activeModuleId ? "active" : ""} ${isCompleted ? "completed" : ""}`}
                 onClick={() => onSelectModule(mod.id)}
               >
                 <span className="sidebar-item-badge">
-                  {conceptIcons[mod.concept] ?? mod.orderIndex}
+                  {isCompleted ? (
+                    <CheckCircle size={18} className="check-icon" />
+                  ) : (
+                    conceptIcons[mod.concept] ?? mod.orderIndex
+                  )}
                 </span>
                 <div className="sidebar-item-content">
                   <span className="sidebar-item-title">{mod.title}</span>

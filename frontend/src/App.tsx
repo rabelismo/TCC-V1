@@ -1,14 +1,42 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ModuleSidebar from "./components/ModuleSidebar";
 import ModuleView from "./components/ModuleView";
-import { fetchModules } from "./services/api";
-import type { Module } from "./types";
+import { fetchModules, fetchUserProgress } from "./services/api";
+import type { Module, StudentProgress } from "./types";
+
+function getOrCreateUserId(): number {
+  const key = "tcc_user_id";
+  const stored = localStorage.getItem(key);
+  if (stored) return Number(stored);
+  const id = 1;
+  localStorage.setItem(key, String(id));
+  return id;
+}
+
+const USER_ID = getOrCreateUserId();
 
 export default function App() {
   const [modules, setModules] = useState<Module[]>([]);
   const [activeModuleId, setActiveModuleId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [completedModuleIds, setCompletedModuleIds] = useState<Set<number>>(
+    new Set()
+  );
+
+  const loadProgress = useCallback(async () => {
+    try {
+      const progress = await fetchUserProgress(USER_ID);
+      const completed = new Set(
+        progress
+          .filter((p: StudentProgress) => p.status === "COMPLETED")
+          .map((p: StudentProgress) => p.module.id)
+      );
+      setCompletedModuleIds(completed);
+    } catch {
+      // progress is optional, don't block
+    }
+  }, []);
 
   useEffect(() => {
     fetchModules()
@@ -17,10 +45,21 @@ export default function App() {
         if (data.length > 0) setActiveModuleId(data[0].id);
       })
       .catch(() =>
-        setError("Não foi possível carregar os módulos. Verifique se o backend está rodando.")
+        setError(
+          "Não foi possível carregar os módulos. Verifique se o backend está rodando."
+        )
       )
       .finally(() => setLoading(false));
-  }, []);
+
+    loadProgress();
+  }, [loadProgress]);
+
+  const handleModuleCompleted = useCallback(
+    (moduleId: number) => {
+      setCompletedModuleIds((prev) => new Set([...prev, moduleId]));
+    },
+    []
+  );
 
   const activeModule = modules.find((m) => m.id === activeModuleId) ?? null;
 
@@ -48,10 +87,16 @@ export default function App() {
         modules={modules}
         activeModuleId={activeModuleId}
         onSelectModule={setActiveModuleId}
+        completedModuleIds={completedModuleIds}
       />
       <main className="app-main">
         {activeModule ? (
-          <ModuleView key={activeModule.id} module={activeModule} />
+          <ModuleView
+            key={activeModule.id}
+            module={activeModule}
+            userId={USER_ID}
+            onCompleted={handleModuleCompleted}
+          />
         ) : (
           <div className="empty-state">
             <p>Selecione um módulo para começar.</p>

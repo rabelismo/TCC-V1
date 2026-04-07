@@ -23,8 +23,8 @@ export interface CodeExecutionResponse {
 
 export interface StudentProgress {
   id: number;
-  userId: number;
-  moduleId: number;
+  user: { id: number };
+  module: { id: number };
   status: "NOT_STARTED" | "IN_PROGRESS" | "COMPLETED";
   lastCodeSnapshot: string | null;
   attempts: number;
