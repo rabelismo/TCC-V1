@@ -41,7 +41,7 @@ jobs:
           cache: maven
 
       - name: Build & Test
-        run: ./mvnw verify -B
+        run: chmod +x ./mvnw && ./mvnw verify -B
         env:
           DB_URL: jdbc:postgresql://localhost:5432/tcc_gdbl
           DB_USERNAME: postgres

@@ -95,7 +95,7 @@ export default function ModuleView({ module, userId, onCompleted }: ModuleViewPr
       setOutput(result.output);
       setError(result.error);
       setExecutionTimeMs(result.executionTimeMs);
-    } catch (err) {
+    } catch {
       if (controller.signal.aborted) {
         setError("Execução interrompida pelo usuário.");
       } else {
