@@ -10,6 +10,7 @@ import com.ufc.tcc_gr.model.CriterionType;
 import com.ufc.tcc_gr.model.Module;
 import com.ufc.tcc_gr.repository.AcceptanceCriterionRepository;
 import com.ufc.tcc_gr.repository.ModuleRepository;
+import com.ufc.tcc_gr.security.AuthenticatedUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,6 +41,9 @@ class SubmissionServiceTest {
 
     @Mock
     private StudentProgressService progressService;
+
+    @Mock
+    private AuthenticatedUser authenticatedUser;
 
     @InjectMocks
     private SubmissionService submissionService;
