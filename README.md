@@ -11,12 +11,22 @@ O aluno aprende construindo um jogo real passo a passo: **Jogo da Velha em Pytho
 
 ## Visao Geral
 
-O curriculo e dividido em micro-modulos, cada um focado em um conceito:
+O curriculo e dividido em 14 modulos incrementais, cada um focado em um conceito:
 
-1. Variaveis e `print`
-2. Arrays 2D (tabuleiro)
-3. `if/else` (validacao de jogadas)
-4. `while` loops (motor do jogo)
+1. **Ola, Jogador!** – Saida de Dados (`print`, strings)
+2. **O Registro dos Competidores** – Entrada de Dados (`input`, variaveis)
+3. **A Linha do Tabuleiro** – Listas Simples (arrays 1D)
+4. **A Grade Completa** – Matrizes (arrays 2D)
+5. **O Pintor do Tabuleiro** – Funcoes
+6. **A Primeira Peca** – Modificacao de Estado (reatribuicao)
+7. **Escolhendo o Alvo** – Conversao de Tipos (`int()`)
+8. **Protegendo a Casa** – Condicional `if/else`
+9. **De Quem e a Vez?** – Alternancia de Turno (operadores logicos)
+10. **O Limite de Tempo** – O Laco `while`
+11. **O Jogo a Prova de Falhas** – Validacao de Entrada
+12. **Vitoria na Horizontal** – Verificacao com `and`
+13. **O Escaneador Inteligente** – O Laco `for`
+14. **O Apito Final** – `break` e Empate
 
 A plataforma oferece:
 
@@ -185,7 +195,6 @@ O backend aplica protecoes basicas:
 
 ## Roadmap Sugerido
 
-- autenticacao/autorizacao (JWT ou sessao)
 - avaliacao automatica por modulo (testes de corretude)
 - salvamento automatico de snapshots de codigo
 - dashboard de progresso do aluno
