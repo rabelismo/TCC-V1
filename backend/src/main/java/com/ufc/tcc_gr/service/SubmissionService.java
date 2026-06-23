@@ -7,6 +7,7 @@ import com.ufc.tcc_gr.model.CriterionType;
 import com.ufc.tcc_gr.model.ProgressStatus;
 import com.ufc.tcc_gr.repository.AcceptanceCriterionRepository;
 import com.ufc.tcc_gr.repository.ModuleRepository;
+import com.ufc.tcc_gr.security.AuthenticatedUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ public class SubmissionService {
     private final ModuleRepository moduleRepo;
     private final PythonExecutionService pythonService;
     private final StudentProgressService progressService;
+    private final AuthenticatedUser authenticatedUser;
 
     public SubmissionResult evaluate(SubmissionRequest request) {
         moduleRepo.findById(request.getModuleId())
@@ -80,6 +82,7 @@ public class SubmissionService {
         boolean allPassed = passedCount == criteria.size();
 
         if (allPassed && request.getUserId() != null) {
+            authenticatedUser.assertOwnership(request.getUserId());
             try {
                 progressService.updateProgress(new ProgressUpdateRequest(
                         request.getUserId(),
