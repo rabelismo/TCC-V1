@@ -10,7 +10,6 @@ import com.ufc.tcc_gr.model.CriterionType;
 import com.ufc.tcc_gr.model.Module;
 import com.ufc.tcc_gr.repository.AcceptanceCriterionRepository;
 import com.ufc.tcc_gr.repository.ModuleRepository;
-import com.ufc.tcc_gr.security.AuthenticatedUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,6 +24,9 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,11 +44,10 @@ class SubmissionServiceTest {
     @Mock
     private StudentProgressService progressService;
 
-    @Mock
-    private AuthenticatedUser authenticatedUser;
-
     @InjectMocks
     private SubmissionService submissionService;
+
+    private static final Long USER_ID = 7L;
 
     private Module sampleModule;
 
@@ -66,9 +67,9 @@ class SubmissionServiceTest {
     void evaluate_moduleNotFound_throwsException() {
         when(moduleRepo.findById(99L)).thenReturn(Optional.empty());
 
-        SubmissionRequest request = new SubmissionRequest(99L, null, "print('oi')");
+        SubmissionRequest request = new SubmissionRequest(99L, "print('oi')");
 
-        assertThatThrownBy(() -> submissionService.evaluate(request))
+        assertThatThrownBy(() -> submissionService.evaluate(USER_ID, request))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("99");
     }
@@ -79,8 +80,7 @@ class SubmissionServiceTest {
         when(moduleRepo.findById(1L)).thenReturn(Optional.of(sampleModule));
         when(criterionRepo.findByModuleIdOrderByOrderIndexAsc(1L)).thenReturn(List.of());
 
-        SubmissionResult result = submissionService.evaluate(
-                new SubmissionRequest(1L, null, "print('hello')")
+        SubmissionResult result = submissionService.evaluate(USER_ID, new SubmissionRequest(1L, "print('hello')")
         );
 
         assertThat(result.isAllPassed()).isFalse();
@@ -106,8 +106,7 @@ class SubmissionServiceTest {
         when(pythonService.execute(any(CodeExecutionRequest.class)))
                 .thenReturn(new CodeExecutionResponse("hello world\n", "", 0, 50));
 
-        SubmissionResult result = submissionService.evaluate(
-                new SubmissionRequest(1L, null, "print('hello world')")
+        SubmissionResult result = submissionService.evaluate(USER_ID, new SubmissionRequest(1L, "print('hello world')")
         );
 
         assertThat(result.isAllPassed()).isTrue();
@@ -135,8 +134,7 @@ class SubmissionServiceTest {
         when(pythonService.execute(any(CodeExecutionRequest.class)))
                 .thenReturn(new CodeExecutionResponse("xyz\n", "", 0, 30));
 
-        SubmissionResult result = submissionService.evaluate(
-                new SubmissionRequest(1L, null, "print('xyz')")
+        SubmissionResult result = submissionService.evaluate(USER_ID, new SubmissionRequest(1L, "print('xyz')")
         );
 
         assertThat(result.isAllPassed()).isFalse();
@@ -165,8 +163,7 @@ class SubmissionServiceTest {
         when(pythonService.execute(argThat(req -> "5".equals(req.getInput()))))
                 .thenReturn(new CodeExecutionResponse("25\n", "", 0, 20));
 
-        SubmissionResult result = submissionService.evaluate(
-                new SubmissionRequest(1L, null, "x = int(input()); print(x**2)")
+        SubmissionResult result = submissionService.evaluate(USER_ID, new SubmissionRequest(1L, "x = int(input()); print(x**2)")
         );
 
         assertThat(result.isAllPassed()).isTrue();
@@ -192,20 +189,15 @@ class SubmissionServiceTest {
         when(pythonService.execute(any(CodeExecutionRequest.class)))
                 .thenReturn(new CodeExecutionResponse("", "SyntaxError: invalid syntax", 1, 10));
 
-        SubmissionResult result = submissionService.evaluate(
-                new SubmissionRequest(1L, null, "print(")
+        SubmissionResult result = submissionService.evaluate(USER_ID, new SubmissionRequest(1L, "print(")
         );
 
         assertThat(result.isAllPassed()).isFalse();
         assertThat(result.getCriteria().get(0).isPassed()).isFalse();
     }
 
-    @Test
-    @DisplayName("Deve atualizar progresso quando allPassed e userId presente")
-    void evaluate_allPassed_updatesProgress() {
-        when(moduleRepo.findById(1L)).thenReturn(Optional.of(sampleModule));
-
-        AcceptanceCriterion criterion = AcceptanceCriterion.builder()
+    private AcceptanceCriterion containsHello() {
+        return AcceptanceCriterion.builder()
                 .id(14L)
                 .orderIndex(1)
                 .description("Output ok")
@@ -213,36 +205,57 @@ class SubmissionServiceTest {
                 .expectedOutput("hello")
                 .hidden(false)
                 .build();
-
-        when(criterionRepo.findByModuleIdOrderByOrderIndexAsc(1L)).thenReturn(List.of(criterion));
-        when(pythonService.execute(any(CodeExecutionRequest.class)))
-                .thenReturn(new CodeExecutionResponse("hello\n", "", 0, 10));
-
-        submissionService.evaluate(new SubmissionRequest(1L, 1L, "print('hello')"));
-
-        verify(progressService).updateProgress(any());
     }
 
     @Test
-    @DisplayName("Não deve chamar progressService quando userId é null")
-    void evaluate_noUserId_skipsProgress() {
+    @DisplayName("Deve registrar submissão aprovada no progresso do usuário autenticado")
+    void evaluate_allPassed_recordsCompletion() {
         when(moduleRepo.findById(1L)).thenReturn(Optional.of(sampleModule));
-
-        AcceptanceCriterion criterion = AcceptanceCriterion.builder()
-                .id(15L)
-                .orderIndex(1)
-                .description("Output ok")
-                .type(CriterionType.OUTPUT_CONTAINS)
-                .expectedOutput("hello")
-                .hidden(false)
-                .build();
-
-        when(criterionRepo.findByModuleIdOrderByOrderIndexAsc(1L)).thenReturn(List.of(criterion));
+        when(criterionRepo.findByModuleIdOrderByOrderIndexAsc(1L)).thenReturn(List.of(containsHello()));
         when(pythonService.execute(any(CodeExecutionRequest.class)))
                 .thenReturn(new CodeExecutionResponse("hello\n", "", 0, 10));
 
-        submissionService.evaluate(new SubmissionRequest(1L, null, "print('hello')"));
+        submissionService.evaluate(USER_ID, new SubmissionRequest(1L, "print('hello')"));
 
-        verify(progressService, never()).updateProgress(any());
+        verify(progressService).recordSubmission(USER_ID, 1L, "print('hello')", true);
+    }
+
+    @Test
+    @DisplayName("Deve registrar tentativa reprovada sem concluir o módulo")
+    void evaluate_failed_recordsAttemptOnly() {
+        when(moduleRepo.findById(1L)).thenReturn(Optional.of(sampleModule));
+        when(criterionRepo.findByModuleIdOrderByOrderIndexAsc(1L)).thenReturn(List.of(containsHello()));
+        when(pythonService.execute(any(CodeExecutionRequest.class)))
+                .thenReturn(new CodeExecutionResponse("tchau\n", "", 0, 10));
+
+        SubmissionResult result = submissionService.evaluate(USER_ID, new SubmissionRequest(1L, "print('tchau')"));
+
+        assertThat(result.isAllPassed()).isFalse();
+        verify(progressService).recordSubmission(USER_ID, 1L, "print('tchau')", false);
+    }
+
+    @Test
+    @DisplayName("Não deve registrar progresso quando o módulo não tem critérios")
+    void evaluate_noCriteria_skipsProgress() {
+        when(moduleRepo.findById(1L)).thenReturn(Optional.of(sampleModule));
+        when(criterionRepo.findByModuleIdOrderByOrderIndexAsc(1L)).thenReturn(List.of());
+
+        submissionService.evaluate(USER_ID, new SubmissionRequest(1L, "print('hello')"));
+
+        verify(progressService, never()).recordSubmission(anyLong(), anyLong(), anyString(), anyBoolean());
+    }
+
+    @Test
+    @DisplayName("Falha ao gravar progresso deve propagar, sem responder aprovado")
+    void evaluate_progressFailure_propagates() {
+        when(moduleRepo.findById(1L)).thenReturn(Optional.of(sampleModule));
+        when(criterionRepo.findByModuleIdOrderByOrderIndexAsc(1L)).thenReturn(List.of(containsHello()));
+        when(pythonService.execute(any(CodeExecutionRequest.class)))
+                .thenReturn(new CodeExecutionResponse("hello\n", "", 0, 10));
+        when(progressService.recordSubmission(anyLong(), anyLong(), anyString(), anyBoolean()))
+                .thenThrow(new IllegalStateException("banco indisponível"));
+
+        assertThatThrownBy(() -> submissionService.evaluate(USER_ID, new SubmissionRequest(1L, "print('hello')")))
+                .isInstanceOf(IllegalStateException.class);
     }
 }

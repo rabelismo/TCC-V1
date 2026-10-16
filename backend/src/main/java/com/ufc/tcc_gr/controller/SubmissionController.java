@@ -2,6 +2,7 @@ package com.ufc.tcc_gr.controller;
 
 import com.ufc.tcc_gr.dto.SubmissionRequest;
 import com.ufc.tcc_gr.dto.SubmissionResult;
+import com.ufc.tcc_gr.security.AuthenticatedUser;
 import com.ufc.tcc_gr.service.SubmissionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +15,10 @@ import org.springframework.web.bind.annotation.*;
 public class SubmissionController {
 
     private final SubmissionService submissionService;
+    private final AuthenticatedUser authenticatedUser;
 
     @PostMapping
     public ResponseEntity<SubmissionResult> submit(@Valid @RequestBody SubmissionRequest request) {
-        return ResponseEntity.ok(submissionService.evaluate(request));
+        return ResponseEntity.ok(submissionService.evaluate(authenticatedUser.getId(), request));
     }
 }

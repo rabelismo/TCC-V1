@@ -2,9 +2,15 @@ package com.ufc.tcc_gr.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.ErrorResponse;
+import org.springframework.web.ErrorResponseException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -56,6 +62,19 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
                 "status", 400,
                 "error", "Bad Request",
+                "message", ex.getMessage(),
+                "timestamp", Instant.now().toString()
+        ));
+    }
+
+    @ExceptionHandler({ErrorResponseException.class, HttpRequestMethodNotSupportedException.class,
+            HttpMediaTypeNotSupportedException.class, NoResourceFoundException.class})
+    public ResponseEntity<Map<String, Object>> handleFrameworkError(Exception ex) {
+        HttpStatusCode code = ((ErrorResponse) ex).getStatusCode();
+        HttpStatus status = HttpStatus.valueOf(code.value());
+        return ResponseEntity.status(code).body(Map.of(
+                "status", code.value(),
+                "error", status.getReasonPhrase(),
                 "message", ex.getMessage(),
                 "timestamp", Instant.now().toString()
         ));

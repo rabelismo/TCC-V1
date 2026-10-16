@@ -34,7 +34,6 @@ export interface StudentProgress {
 
 export interface SubmissionRequest {
   moduleId: number;
-  userId?: number;
   code: string;
 }
 

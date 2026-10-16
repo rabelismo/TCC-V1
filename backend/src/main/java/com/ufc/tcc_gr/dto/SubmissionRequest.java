@@ -14,8 +14,6 @@ public class SubmissionRequest {
     @NotNull(message = "O moduleId é obrigatório")
     private Long moduleId;
 
-    private Long userId;
-
     @NotBlank(message = "O código não pode estar vazio")
     private String code;
 }

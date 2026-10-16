@@ -40,7 +40,6 @@ function clearSavedCode(moduleId: number): void {
 interface ModuleViewProps {
   module: Module;
   totalModules: number;
-  userId: number;
   onCompleted: (moduleId: number) => void;
   onOpenSidebar: () => void;
 }
@@ -48,7 +47,6 @@ interface ModuleViewProps {
 export default function ModuleView({
   module,
   totalModules,
-  userId,
   onCompleted,
   onOpenSidebar,
 }: ModuleViewProps) {
@@ -133,7 +131,7 @@ export default function ModuleView({
     setError("");
 
     try {
-      const result = await submitCode({ moduleId: module.id, userId, code });
+      const result = await submitCode({ moduleId: module.id, code });
       setSubmissionResult(result);
       if (result.allPassed) {
         onCompleted(module.id);

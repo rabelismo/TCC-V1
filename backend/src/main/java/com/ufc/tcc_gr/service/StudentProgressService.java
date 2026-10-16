@@ -1,9 +1,7 @@
 package com.ufc.tcc_gr.service;
 
-import com.ufc.tcc_gr.dto.ProgressUpdateRequest;
 import com.ufc.tcc_gr.exception.ResourceNotFoundException;
 import com.ufc.tcc_gr.model.Module;
-import com.ufc.tcc_gr.model.ProgressStatus;
 import com.ufc.tcc_gr.model.StudentProgress;
 import com.ufc.tcc_gr.model.User;
 import com.ufc.tcc_gr.repository.ModuleRepository;
@@ -29,32 +27,22 @@ public class StudentProgressService {
     }
 
     @Transactional
-    public StudentProgress updateProgress(ProgressUpdateRequest request) {
-        User user = userRepo.findById(request.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado: " + request.getUserId()));
-        Module module = moduleRepo.findById(request.getModuleId())
-                .orElseThrow(() -> new ResourceNotFoundException("Módulo não encontrado: " + request.getModuleId()));
+    public StudentProgress recordSubmission(Long userId, Long moduleId, String code, boolean passed) {
+        LocalDateTime now = LocalDateTime.now();
+        StudentProgress progress = progressRepo.findByUserIdAndModuleId(userId, moduleId)
+                .orElseGet(() -> StudentProgress.start(findUser(userId), findModule(moduleId), now));
 
-        StudentProgress progress = progressRepo
-                .findByUserIdAndModuleId(request.getUserId(), request.getModuleId())
-                .orElseGet(() -> {
-                    StudentProgress sp = new StudentProgress(user, module);
-                    sp.setStartedAt(LocalDateTime.now());
-                    return sp;
-                });
-
-        if (request.getStatus() != null) {
-            progress.setStatus(request.getStatus());
-        }
-        if (request.getCodeSnapshot() != null) {
-            progress.setLastCodeSnapshot(request.getCodeSnapshot());
-        }
-        progress.setAttempts(progress.getAttempts() + 1);
-
-        if (ProgressStatus.COMPLETED == progress.getStatus() && progress.getCompletedAt() == null) {
-            progress.setCompletedAt(LocalDateTime.now());
-        }
-
+        progress.recordSubmission(code, passed, now);
         return progressRepo.save(progress);
+    }
+
+    private User findUser(Long userId) {
+        return userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado: " + userId));
+    }
+
+    private Module findModule(Long moduleId) {
+        return moduleRepo.findById(moduleId)
+                .orElseThrow(() -> new ResourceNotFoundException("Módulo não encontrado: " + moduleId));
     }
 }

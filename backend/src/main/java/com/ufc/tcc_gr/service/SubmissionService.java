@@ -4,18 +4,14 @@ import com.ufc.tcc_gr.dto.*;
 import com.ufc.tcc_gr.exception.ResourceNotFoundException;
 import com.ufc.tcc_gr.model.AcceptanceCriterion;
 import com.ufc.tcc_gr.model.CriterionType;
-import com.ufc.tcc_gr.model.ProgressStatus;
 import com.ufc.tcc_gr.repository.AcceptanceCriterionRepository;
 import com.ufc.tcc_gr.repository.ModuleRepository;
-import com.ufc.tcc_gr.security.AuthenticatedUser;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SubmissionService {
@@ -24,9 +20,8 @@ public class SubmissionService {
     private final ModuleRepository moduleRepo;
     private final PythonExecutionService pythonService;
     private final StudentProgressService progressService;
-    private final AuthenticatedUser authenticatedUser;
 
-    public SubmissionResult evaluate(SubmissionRequest request) {
+    public SubmissionResult evaluate(Long userId, SubmissionRequest request) {
         moduleRepo.findById(request.getModuleId())
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Módulo não encontrado: " + request.getModuleId()));
@@ -81,19 +76,7 @@ public class SubmissionService {
 
         boolean allPassed = passedCount == criteria.size();
 
-        if (allPassed && request.getUserId() != null) {
-            authenticatedUser.assertOwnership(request.getUserId());
-            try {
-                progressService.updateProgress(new ProgressUpdateRequest(
-                        request.getUserId(),
-                        request.getModuleId(),
-                        ProgressStatus.COMPLETED,
-                        request.getCode()
-                ));
-            } catch (Exception e) {
-                log.warn("Não foi possível atualizar progresso do aluno: {}", e.getMessage());
-            }
-        }
+        progressService.recordSubmission(userId, request.getModuleId(), request.getCode(), allPassed);
 
         return SubmissionResult.builder()
                 .allPassed(allPassed)

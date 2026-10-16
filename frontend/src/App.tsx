@@ -199,7 +199,6 @@ export default function App() {
             key={activeModule.id}
             module={activeModule}
             totalModules={modules.length}
-            userId={user.userId}
             onCompleted={handleModuleCompleted}
             onOpenSidebar={() => setSidebarOpen(true)}
           />

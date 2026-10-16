@@ -10,8 +10,7 @@ import java.time.LocalDateTime;
 @Table(name = "student_progress",
        uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "module_id"}))
 @Getter
-@Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StudentProgress {
 
     @Id
@@ -42,12 +41,37 @@ public class StudentProgress {
 
     private LocalDateTime completedAt;
 
-    @Setter(AccessLevel.NONE)
     private LocalDateTime updatedAt = LocalDateTime.now();
 
-    public StudentProgress(User user, Module module) {
+    private StudentProgress(User user, Module module, LocalDateTime startedAt) {
         this.user = user;
         this.module = module;
+        this.startedAt = startedAt;
+    }
+
+    public static StudentProgress start(User user, Module module, LocalDateTime now) {
+        return new StudentProgress(user, module, now);
+    }
+
+    public void recordSubmission(String code, boolean passed, LocalDateTime now) {
+        attempts++;
+        lastCodeSnapshot = code;
+        if (passed) {
+            complete(now);
+        } else if (status == ProgressStatus.NOT_STARTED) {
+            status = ProgressStatus.IN_PROGRESS;
+        }
+    }
+
+    public boolean isCompleted() {
+        return status == ProgressStatus.COMPLETED;
+    }
+
+    private void complete(LocalDateTime now) {
+        status = ProgressStatus.COMPLETED;
+        if (completedAt == null) {
+            completedAt = now;
+        }
     }
 
     @PreUpdate
