@@ -42,5 +42,6 @@ public class AcceptanceCriterion {
     private String hint;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean hidden = false;
 }
