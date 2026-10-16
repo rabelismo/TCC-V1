@@ -45,10 +45,26 @@ limites, herda segredos), **contratos de erro** (falta de capacidade vira "códi
 | H3 | — (endpoint removido) | `POST /api/modules` recebe entidade JPA; ninguém chama | conteúdo vem só do JSON | matcher em `SecurityConfig` | `./mvnw test` | Done |
 | H4 | Autenticação por JWT | `JwtAuthFilter` faz parse 2× (`isValid` + `parseToken`); 3 métodos mortos | `JwtService.verify` | — | testes de `JwtService` | Done |
 | H5 | Erros de requisição devolvem 4xx | JSON malformado virava 500 (achado no teste real); corpo do 429 saía em ISO-8859-1 | `GlobalExceptionHandler` / `RateLimitFilter` | — | testes + smoke contra a app rodando | Done |
+| B6 | Execução que funciona devolve saída e exit code | `catch (Exception)` em `PythonExecutionService` devolvia `exitCode 1` → falha de infraestrutura reprovava o aluno e contava tentativa (2ª passada) | `PythonExecutionService` lança exceção → 500 | — | teste com interpretador inexistente | Done |
 | F1 | — | login com senha errada recarrega a página (interceptor 401) | frontend `api.ts` | — | — | Proposed (fora do escopo: frontend) |
 | F2 | — | interceptor repete POST em 5xx (submissão contada 3×) | frontend `api.ts` | — | — | Proposed (fora do escopo: frontend) |
 | P1 | — | `expectedOutput` do módulo é exposto no `GET /api/modules` (= resposta de um critério em 5 módulos) | decisão de produto | testes do frontend usam o campo | — | Proposed (precisa de decisão) |
+| E1 | — | `AuthController` devolve `{"error": mensagem}` à mão; o `GlobalExceptionHandler` devolve `{status, error: motivo HTTP, message}`; o frontend lê `data.error` | contrato único de erro, junto com F1 | `AuthControllerTest`, `AuthPage.tsx` | — | Proposed (exige mudar backend e frontend juntos) |
+| P2 | — | critério oculto reprovado devolve `actualOutput` (saída para a entrada oculta); o frontend não exibe | decisão de produto | — | — | Proposed |
 | X1 | Recriar critérios a cada boot | IDs de critério mudam a cada deploy | — | — | — | Deliberate — do not fix: ninguém persiste `criterionId` |
 | X2 | `sys.modules[...] = None` no wrapper | redundante com a remoção de `__import__` | — | — | — | Deliberate — do not fix: defesa em profundidade |
 | X3 | `@JsonIgnoreProperties` nas entidades | entidades não são mais serializadas | — | — | — | Rejected: churn sem ganho |
 | X4 | JWT no `localStorage`, semáforo e rate limit em memória | — | — | — | — | Deliberate — do not fix: aceitável com uma instância e markdown sem HTML bruto |
+
+## Passadas
+
+1. Auditoria inicial (arquitetura + taxonomia) → B1–B5, D1–D2, H1–H4.
+2. Segunda passada após T1–T3 (`grep` de `catch (Exception`, `ResponseEntity<?>`, métodos de repositório sem uso) → B6, E1, P2. Teste com a app rodando → H5.
+3. Terceira passada: nenhum novo defeito no backend. Ledger seco.
+
+## Lições para a próxima auditoria
+
+- **Spring Boot 4 modularizou a autoconfiguração**: `flyway-core` sozinho não executa migrations; é preciso `spring-boot-starter-flyway`. Conferir sempre pelos logs (`Migrating schema`), nunca pela propriedade `spring.flyway.enabled`.
+- O teste com a app rodando achou dois defeitos (JSON malformado → 500, 429 sem charset) que nenhum teste unitário pegava.
+- No Git Bash do Windows, acentos em `curl -d` saem fora de UTF-8; usar Python/arquivo para testar corpos com acento.
+- `contextLoads` roda contra o Postgres local de desenvolvimento e o altera (sincroniza módulos; agora também aplica migrations).

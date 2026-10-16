@@ -140,17 +140,24 @@ public class PythonExecutionService {
 
             return new CodeExecutionResponse(stdout, stderr, process.exitValue(), elapsed);
 
-        } catch (Exception e) {
-            log.error("Erro ao executar código Python", e);
-            if (process != null && process.isAlive()) {
-                process.destroyForcibly();
-            }
-            return new CodeExecutionResponse("", "Erro interno ao executar código.", 1, 0);
+        } catch (IOException | ExecutionException | TimeoutException e) {
+            destroy(process);
+            throw new IllegalStateException("Falha de infraestrutura ao executar Python", e);
+        } catch (InterruptedException e) {
+            destroy(process);
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Execução Python interrompida", e);
         } finally {
             executionSemaphore.release();
             if (tempFile != null) {
                 try { Files.deleteIfExists(tempFile); } catch (IOException ignored) {}
             }
+        }
+    }
+
+    private static void destroy(Process process) {
+        if (process != null && process.isAlive()) {
+            process.destroyForcibly();
         }
     }
 

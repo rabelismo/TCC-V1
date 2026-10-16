@@ -55,6 +55,16 @@ class PythonExecutionServiceTest {
     }
 
     @Test
+    @DisplayName("Falha de infraestrutura vira exceção, não um resultado de execução do aluno")
+    void execute_missingInterpreter_throws() {
+        PythonExecutionService broken = new PythonExecutionService(10, "python-inexistente-xyz", 5, 256);
+
+        assertThatThrownBy(() -> broken.execute(new CodeExecutionRequest("print(1)", null)))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("infraestrutura");
+    }
+
+    @Test
     @DisplayName("Qualquer import recebe mensagem clara antes de executar")
     void validateCode_rejectsAnyImport() {
         assertThat(service.validateCode("import random")).contains("importações não estão disponíveis");
