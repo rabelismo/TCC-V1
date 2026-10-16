@@ -46,7 +46,7 @@ limites, herda segredos), **contratos de erro** (falta de capacidade vira "códi
 | H4 | Autenticação por JWT | `JwtAuthFilter` faz parse 2× (`isValid` + `parseToken`); 3 métodos mortos | `JwtService.verify` | — | testes de `JwtService` | Done |
 | H5 | Erros de requisição devolvem 4xx | JSON malformado virava 500 (achado no teste real); corpo do 429 saía em ISO-8859-1 | `GlobalExceptionHandler` / `RateLimitFilter` | — | testes + smoke contra a app rodando | Done |
 | B6 | Execução que funciona devolve saída e exit code | `catch (Exception)` em `PythonExecutionService` devolvia `exitCode 1` → falha de infraestrutura reprovava o aluno e contava tentativa (2ª passada) | `PythonExecutionService` lança exceção → 500 | — | teste com interpretador inexistente | Done |
-| F1 | — | login com senha errada recarrega a página (interceptor 401) | frontend `api.ts` | — | — | Proposed (fora do escopo: frontend) |
+| F1 | 401 em rota protegida encerra a sessão e recarrega | login com senha errada recarrega a página (interceptor 401) | interceptor de `api.ts` ignora `/auth/*` | — | `src/test/api.test.ts` | Done |
 | F2 | — | interceptor repete POST em 5xx (submissão contada 3×) | frontend `api.ts` | — | — | Proposed (fora do escopo: frontend) |
 | P1 | — | `expectedOutput` do módulo é exposto no `GET /api/modules` (= resposta de um critério em 5 módulos) | decisão de produto | testes do frontend usam o campo | — | Proposed (precisa de decisão) |
 | E1 | — | `AuthController` devolve `{"error": mensagem}` à mão; o `GlobalExceptionHandler` devolve `{status, error: motivo HTTP, message}`; o frontend lê `data.error` | contrato único de erro, junto com F1 | `AuthControllerTest`, `AuthPage.tsx` | — | Proposed (exige mudar backend e frontend juntos) |

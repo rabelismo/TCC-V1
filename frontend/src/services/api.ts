@@ -12,7 +12,7 @@ import type {
 const MAX_RETRIES = 2;
 const RETRY_DELAY_MS = 1000;
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:8080/api",
   headers: { "Content-Type": "application/json" },
   timeout: 30_000,
@@ -34,7 +34,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !error.config?.url?.startsWith("/auth/")) {
       localStorage.removeItem("tcc_auth");
       window.location.reload();
       return Promise.reject(error);
