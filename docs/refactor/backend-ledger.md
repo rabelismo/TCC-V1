@@ -33,11 +33,11 @@ limites, herda segredos), **contratos de erro** (falta de capacidade vira "códi
 | ID | Comportamento preservado | Evidência | Dono após a mudança | Pins | Validação | Status |
 |---|---|---|---|---|---|---|
 | T0 | Progresso só muda por submissão avaliada; identidade vem do token | revisão de design anterior | `StudentProgress` / `StudentProgressService.recordSubmission` | — | `./mvnw test` | Done |
-| B1 | Execução normal de programas pequenos | sem `setrlimit` em `sandbox_wrapper.py` nem no `ProcessBuilder` | `sandbox_wrapper.py` (limites antes de remover builtins) | — | teste Linux-only em `PythonExecutionServiceTest`; **verificação real exige Linux/Docker** | Approved |
-| B2 | Programas rodam com UTF-8 e sem bytecode | `PythonExecutionService` copia o ambiente do JVM (`pb.environment()`) | `PythonExecutionService.buildProcess` | — | teste do ambiente do `ProcessBuilder` | Approved |
-| B3 | Execução falha visível ao aluno quando há erro no código | `tryAcquire()` falho devolve `exitCode 1` e reprova critério | `ExecutionCapacityException` → 503 no `GlobalExceptionHandler` | — | testes de serviço + `SubmissionServiceTest` | Approved |
-| B4 | Critérios avaliados na ordem; saída compartilhada entre critérios sem input | 4 execuções × 10s > 30s | orçamento total em `SubmissionService` | — | teste de orçamento esgotado | Approved |
-| B5 | Bloqueio das funções perigosas | `open\s*\(` casa `reopen(`; `import math` dá erro críptico | `PythonExecutionService.validateCode` | — | testes de validação | Approved |
+| B1 | Execução normal de programas pequenos | sem `setrlimit` em `sandbox_wrapper.py` nem no `ProcessBuilder` | `sandbox_wrapper.py` (limites antes de remover builtins) | — | teste Linux-only em `PythonExecutionServiceTest`; **verificação real exige Linux/Docker** | Done — teste Linux-only pulado no Windows; validar no container |
+| B2 | Programas rodam com UTF-8 e sem bytecode | `PythonExecutionService` copia o ambiente do JVM (`pb.environment()`) | `PythonExecutionService.buildProcess` | — | teste do ambiente do `ProcessBuilder` | Done |
+| B3 | Execução falha visível ao aluno quando há erro no código | `tryAcquire()` falho devolve `exitCode 1` e reprova critério | `ExecutionCapacityException` → 503 no `GlobalExceptionHandler` | — | testes de serviço + `SubmissionServiceTest` | Done |
+| B4 | Critérios avaliados na ordem; saída compartilhada entre critérios sem input | 4 execuções × 10s > 30s | orçamento total em `SubmissionService` | — | teste de orçamento esgotado | Done |
+| B5 | Bloqueio das funções perigosas | `open\s*\(` casa `reopen(`; `import math` dá erro críptico | `PythonExecutionService.validateCode` | — | testes de validação | Done |
 | D1 | Esquema atual do banco | prod: Flyway + `ddl-auto=update`; dev: Flyway desligado | Flyway (único dono), `ddl-auto=validate` | `contextLoads` contra Postgres local | `./mvnw test` | Approved |
 | D2 | Sincronização de módulos por `orderIndex`, progresso preservado | JSON inválido é só logado; módulo fica sem critérios | `ModuleCatalogSync` (transacional, falha rápido) | `contextLoads` | teste com JSON inválido | Approved |
 | H1 | 30 req/min em `/api/execute` e `/api/submit` | chave = 1º valor de `X-Forwarded-For` (falsificável); mapa nunca limpo | `RateLimitFilter` por usuário autenticado | — | testes do filtro | Approved |

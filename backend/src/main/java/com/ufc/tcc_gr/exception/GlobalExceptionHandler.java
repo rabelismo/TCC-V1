@@ -67,6 +67,16 @@ public class GlobalExceptionHandler {
         ));
     }
 
+    @ExceptionHandler(ExecutionCapacityException.class)
+    public ResponseEntity<Map<String, Object>> handleCapacity(ExecutionCapacityException ex) {
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(Map.of(
+                "status", 503,
+                "error", "Service Unavailable",
+                "message", ex.getMessage(),
+                "timestamp", Instant.now().toString()
+        ));
+    }
+
     @ExceptionHandler({ErrorResponseException.class, HttpRequestMethodNotSupportedException.class,
             HttpMediaTypeNotSupportedException.class, NoResourceFoundException.class})
     public ResponseEntity<Map<String, Object>> handleFrameworkError(Exception ex) {

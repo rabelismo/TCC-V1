@@ -16,6 +16,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SubmissionService {
 
+    static final long TIME_BUDGET_MS = 15_000;
+    static final String BUDGET_EXHAUSTED_HINT =
+            "A avaliação parou por tempo: as execuções anteriores demoraram demais. "
+            + "Verifique loops infinitos ou input() sem dados e submeta de novo.";
+
     private final AcceptanceCriterionRepository criterionRepo;
     private final ModuleRepository moduleRepo;
     private final PythonExecutionService pythonService;
@@ -39,20 +44,30 @@ public class SubmissionService {
         }
 
         CodeExecutionResponse defaultRun = null;
+        long spentMs = 0;
 
         List<CriterionResult> results = new ArrayList<>();
         int passedCount = 0;
 
         for (AcceptanceCriterion criterion : criteria) {
-            CodeExecutionResponse execution;
+            boolean ownInput = criterion.getType() == CriterionType.TEST_CASE && criterion.getInput() != null;
+            boolean needsRun = ownInput || defaultRun == null;
 
-            if (criterion.getType() == CriterionType.TEST_CASE && criterion.getInput() != null) {
+            if (needsRun && spentMs >= TIME_BUDGET_MS) {
+                results.add(budgetExhausted(criterion));
+                continue;
+            }
+
+            CodeExecutionResponse execution;
+            if (ownInput) {
                 execution = pythonService.execute(
                         new CodeExecutionRequest(request.getCode(), criterion.getInput()));
+                spentMs += execution.getExecutionTimeMs();
             } else {
                 if (defaultRun == null) {
                     defaultRun = pythonService.execute(
                             new CodeExecutionRequest(request.getCode(), null));
+                    spentMs += defaultRun.getExecutionTimeMs();
                 }
                 execution = defaultRun;
             }
@@ -83,6 +98,17 @@ public class SubmissionService {
                 .passedCount(passedCount)
                 .totalCount(criteria.size())
                 .criteria(results)
+                .build();
+    }
+
+    private CriterionResult budgetExhausted(AcceptanceCriterion criterion) {
+        return CriterionResult.builder()
+                .criterionId(criterion.getId())
+                .description(criterion.getHidden() ? "Critério oculto" : criterion.getDescription())
+                .passed(false)
+                .hint(BUDGET_EXHAUSTED_HINT)
+                .actualOutput("")
+                .hidden(criterion.getHidden())
                 .build();
     }
 

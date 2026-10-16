@@ -5,6 +5,17 @@ Restricts dangerous builtins and disables filesystem/network access.
 import builtins as _builtins
 import sys as _sys
 
+try:
+    import resource as _resource
+    _memory_bytes = int(_sys.argv[1]) * 1024 * 1024
+    _cpu_seconds = int(_sys.argv[2])
+    _resource.setrlimit(_resource.RLIMIT_AS, (_memory_bytes, _memory_bytes))
+    _resource.setrlimit(_resource.RLIMIT_CPU, (_cpu_seconds, _cpu_seconds))
+    del _resource, _memory_bytes, _cpu_seconds
+except (ImportError, IndexError, ValueError):
+    pass
+_sys.argv[:] = _sys.argv[:1]
+
 _ALLOWED_BUILTINS = {
     'abs', 'all', 'any', 'ascii', 'bin', 'bool', 'bytearray', 'bytes',
     'callable', 'chr', 'complex', 'dict', 'dir', 'divmod', 'enumerate',
