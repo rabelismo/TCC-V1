@@ -44,9 +44,10 @@ export default function AuthPage({ onAuth }: AuthPageProps) {
       onAuth(user);
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
-        const axiosErr = err as { response?: { data?: { error?: string } } };
+        const axiosErr = err as { response?: { data?: { message?: string; error?: string } } };
         setError(
-          axiosErr.response?.data?.error ||
+          axiosErr.response?.data?.message ||
+            axiosErr.response?.data?.error ||
             (isLogin
               ? "Email ou senha incorretos. Confira os dados e tente de novo."
               : "Não foi possível criar a conta. Confira os dados e tente de novo.")

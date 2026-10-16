@@ -69,7 +69,9 @@ class AuthControllerTest {
                             {"name": "Test", "email": "test@test.com", "password": "123456"}
                             """))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.error").exists());
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.message").value("Email já cadastrado"));
     }
 
     @Test
@@ -104,7 +106,23 @@ class AuthControllerTest {
                             {"email": "test@test.com", "password": "wrong123"}
                             """))
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error").exists());
+                .andExpect(jsonPath("$.error").exists())
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.message").value("Email ou senha inválidos"));
+    }
+
+    @Test
+    @DisplayName("POST /api/auth/login - deve rejeitar email desconhecido com a mesma mensagem")
+    void login_unknownEmail() throws Exception {
+        when(userRepo.findByEmail("nobody@test.com")).thenReturn(Optional.empty());
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {"email": "nobody@test.com", "password": "123456"}
+                            """))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value("Email ou senha inválidos"));
     }
 
     @Test
