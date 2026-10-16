@@ -63,6 +63,16 @@ class SubmissionControllerTest {
     }
 
     @Test
+    @DisplayName("JSON malformado responde 400, não 500")
+    void submit_malformedJson_returns400() throws Exception {
+        mockMvc.perform(post("/api/submit")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new byte[]{'{', '"', 'c', '"', ':', '"', 'O', 'l', (byte) 0xE1, ' ', '"', '}'}))
+                .andExpect(status().isBadRequest());
+        verifyNoInteractions(submissionService);
+    }
+
+    @Test
     @DisplayName("POST /api/progress não existe mais: progresso não é escrito pelo cliente")
     void progress_cannotBeWrittenByClient() throws Exception {
         mockMvc.perform(post("/api/progress")

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.ErrorResponseException;
@@ -53,6 +54,16 @@ public class GlobalExceptionHandler {
                 "status", 400,
                 "error", "Validation Failed",
                 "message", errors,
+                "timestamp", Instant.now().toString()
+        ));
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Map<String, Object>> handleUnreadable(HttpMessageNotReadableException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                "status", 400,
+                "error", "Bad Request",
+                "message", "Corpo da requisição inválido: envie um JSON válido em UTF-8.",
                 "timestamp", Instant.now().toString()
         ));
     }

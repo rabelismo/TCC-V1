@@ -1,7 +1,6 @@
 package com.ufc.tcc_gr.controller;
 
 import com.ufc.tcc_gr.dto.ModuleResponse;
-import com.ufc.tcc_gr.model.Module;
 import com.ufc.tcc_gr.repository.ModuleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +26,5 @@ public class ModuleController {
         return moduleRepo.findById(id)
                 .map(m -> ResponseEntity.ok(ModuleResponse.from(m)))
                 .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping
-    public ModuleResponse createModule(@RequestBody Module module) {
-        return ModuleResponse.from(moduleRepo.save(module));
     }
 }

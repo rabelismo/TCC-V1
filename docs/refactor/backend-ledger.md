@@ -40,10 +40,11 @@ limites, herda segredos), **contratos de erro** (falta de capacidade vira "códi
 | B5 | Bloqueio das funções perigosas | `open\s*\(` casa `reopen(`; `import math` dá erro críptico | `PythonExecutionService.validateCode` | — | testes de validação | Done |
 | D1 | Esquema atual do banco | prod: Flyway + `ddl-auto=update`, **mas o Flyway nunca rodou**: faltava `spring-boot-starter-flyway` no Boot 4 (nenhum log de migração; `./mvnw dependency:tree \| grep flyway` sem `spring-boot-flyway`) | Flyway (único dono), `ddl-auto=validate` | `contextLoads` contra Postgres local | `./mvnw test` | Done — validado em banco existente e em banco vazio temporário |
 | D2 | Sincronização de módulos por `orderIndex`, progresso preservado | JSON inválido é só logado; módulo fica sem critérios | `ModuleCatalogSync` (transacional, falha rápido) | `contextLoads` | teste com JSON inválido | Done |
-| H1 | 30 req/min em `/api/execute` e `/api/submit` | chave = 1º valor de `X-Forwarded-For` (falsificável); mapa nunca limpo | `RateLimitFilter` por usuário autenticado | — | testes do filtro | Approved |
-| H2 | CORS para as origens configuradas | CORS em `WebConfig` e `SecurityConfig` | `SecurityConfig` | — | preflight real com a app rodando | Approved |
-| H3 | — (endpoint removido) | `POST /api/modules` recebe entidade JPA; ninguém chama | conteúdo vem só do JSON | matcher em `SecurityConfig` | `./mvnw test` | Approved |
-| H4 | Autenticação por JWT | `JwtAuthFilter` faz parse 2× (`isValid` + `parseToken`); 3 métodos mortos | `JwtService.verify` | — | testes de `JwtService` | Approved |
+| H1 | 30 req/min em `/api/execute` e `/api/submit` | chave = 1º valor de `X-Forwarded-For` (falsificável); mapa nunca limpo | `RateLimitFilter` por usuário autenticado | — | testes do filtro | Done |
+| H2 | CORS para as origens configuradas | CORS em `WebConfig` e `SecurityConfig` | `SecurityConfig` | — | preflight real com a app rodando | Done |
+| H3 | — (endpoint removido) | `POST /api/modules` recebe entidade JPA; ninguém chama | conteúdo vem só do JSON | matcher em `SecurityConfig` | `./mvnw test` | Done |
+| H4 | Autenticação por JWT | `JwtAuthFilter` faz parse 2× (`isValid` + `parseToken`); 3 métodos mortos | `JwtService.verify` | — | testes de `JwtService` | Done |
+| H5 | Erros de requisição devolvem 4xx | JSON malformado virava 500 (achado no teste real); corpo do 429 saía em ISO-8859-1 | `GlobalExceptionHandler` / `RateLimitFilter` | — | testes + smoke contra a app rodando | Done |
 | F1 | — | login com senha errada recarrega a página (interceptor 401) | frontend `api.ts` | — | — | Proposed (fora do escopo: frontend) |
 | F2 | — | interceptor repete POST em 5xx (submissão contada 3×) | frontend `api.ts` | — | — | Proposed (fora do escopo: frontend) |
 | P1 | — | `expectedOutput` do módulo é exposto no `GET /api/modules` (= resposta de um critério em 5 módulos) | decisão de produto | testes do frontend usam o campo | — | Proposed (precisa de decisão) |

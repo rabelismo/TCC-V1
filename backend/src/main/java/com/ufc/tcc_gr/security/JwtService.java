@@ -1,6 +1,7 @@
 package com.ufc.tcc_gr.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 public class JwtService {
@@ -34,24 +36,15 @@ public class JwtService {
                 .compact();
     }
 
-    public Claims parseToken(String token) {
-        return Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-    }
-
-    public Long getUserId(String token) {
-        return Long.valueOf(parseToken(token).getSubject());
-    }
-
-    public boolean isValid(String token) {
+    public Optional<Claims> verify(String token) {
         try {
-            Claims claims = parseToken(token);
-            return claims.getExpiration().after(new Date());
-        } catch (Exception e) {
-            return false;
+            return Optional.of(Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload());
+        } catch (JwtException | IllegalArgumentException e) {
+            return Optional.empty();
         }
     }
 }

@@ -10,6 +10,5 @@ import java.util.Optional;
 @Repository
 public interface ModuleRepository extends JpaRepository<Module, Long> {
     List<Module> findAllByOrderByOrderIndexAsc();
-    List<Module> findByConcept(String concept);
     Optional<Module> findByOrderIndex(Integer orderIndex);
 }
