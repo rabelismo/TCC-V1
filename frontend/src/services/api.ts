@@ -18,6 +18,12 @@ export const api = axios.create({
   timeout: 30_000,
 });
 
+function isRetryable(method?: string, url?: string, status?: number): boolean {
+  if (status === undefined) return false;
+  if (method?.toLowerCase() === "get") return status >= 500;
+  return method?.toLowerCase() === "post" && url === "/execute" && status === 503;
+}
+
 api.interceptors.request.use((config) => {
   const stored = localStorage.getItem("tcc_auth");
   if (stored) {
@@ -41,20 +47,11 @@ api.interceptors.response.use(
     }
 
     const config = error.config;
-    if (
-      error.response?.status >= 500 &&
-      config &&
-      !config.__retryCount
-    ) {
-      config.__retryCount = 0;
-    }
-
-    if (
-      config &&
-      error.response?.status >= 500 &&
-      config.__retryCount < MAX_RETRIES
-    ) {
-      config.__retryCount += 1;
+    if (config && isRetryable(config.method, config.url, error.response?.status)) {
+      config.__retryCount = (config.__retryCount ?? 0) + 1;
+      if (config.__retryCount > MAX_RETRIES) {
+        return Promise.reject(error);
+      }
       await new Promise((r) => setTimeout(r, RETRY_DELAY_MS * config.__retryCount));
       return api(config);
     }

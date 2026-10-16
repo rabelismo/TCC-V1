@@ -64,3 +64,46 @@ describe("interceptor de 401", () => {
     expect(localStorage.getItem("tcc_auth")).toBeNull();
   });
 });
+
+describe("repetição em 5xx", () => {
+  it("repete GET até duas vezes", async () => {
+    const adapter = respondWith(500);
+
+    const { error } = await settle(api.get("/modules"));
+
+    expect(error?.response?.status).toBe(500);
+    expect(adapter).toHaveBeenCalledTimes(3);
+  });
+
+  it("não repete POST /submit, que conta tentativa", async () => {
+    const adapter = respondWith(500);
+
+    await settle(api.post("/submit", {}));
+
+    expect(adapter).toHaveBeenCalledOnce();
+  });
+
+  it("não repete POST /execute em erro interno", async () => {
+    const adapter = respondWith(500);
+
+    await settle(api.post("/execute", {}));
+
+    expect(adapter).toHaveBeenCalledOnce();
+  });
+
+  it("repete POST /execute quando o servidor está sem capacidade", async () => {
+    const adapter = respondWith(503);
+
+    await settle(api.post("/execute", {}));
+
+    expect(adapter).toHaveBeenCalledTimes(3);
+  });
+
+  it("não repete POST /submit sem capacidade", async () => {
+    const adapter = respondWith(503);
+
+    await settle(api.post("/submit", {}));
+
+    expect(adapter).toHaveBeenCalledOnce();
+  });
+});
